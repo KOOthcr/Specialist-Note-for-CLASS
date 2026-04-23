@@ -1,0 +1,334 @@
+.student-page-container {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding: 40px 20px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+.student-header {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.school-icon {
+  font-size: 64px;
+}
+
+.student-greeting h1 {
+  margin: 0 0 10px 0;
+  font-size: 28px;
+  color: #1e293b;
+}
+
+.student-greeting h1 strong {
+  color: var(--color-primary);
+}
+
+.student-greeting p {
+  margin: 0;
+  font-size: 16px;
+  color: #64748b;
+}
+
+/* Menu Grid */
+.student-menu-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.menu-card {
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 28px;
+  padding: 50px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  outline: none;
+}
+
+.menu-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.card-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  transition: transform 0.3s ease;
+}
+
+.menu-card:hover .card-icon {
+  transform: scale(1.1);
+}
+
+.card-content h3 {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  color: #1e293b;
+}
+
+.card-content p {
+  margin: 0;
+  font-size: 16px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Card Themes */
+.card-blue:hover { border-color: #bfdbfe; background-color: #eff6ff; }
+.card-green:hover { border-color: #bbf7d0; background-color: #f0fdf4; }
+.card-orange:hover { border-color: #fed7aa; background-color: #fff7ed; }
+.card-purple:hover { border-color: #e9d5ff; background-color: #faf5ff; }
+.card-pink:hover { border-color: #fbcfe8; background-color: #fdf2f8; }
+
+
+/* Modal Styles */
+.student-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.student-modal-content {
+  background: white;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-icon-large {
+  font-size: 64px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 24px;
+  color: #1e293b;
+  margin: 0 0 10px 0;
+}
+
+.modal-desc {
+  text-align: center;
+  color: #64748b;
+  margin: 0 0 30px 0;
+  line-height: 1.5;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #334155;
+  font-size: 15px;
+}
+
+.modal-input {
+  padding: 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.modal-input:focus {
+  border-color: var(--color-primary);
+}
+
+.modal-textarea {
+  width: 100%;
+  height: 150px;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  margin-bottom: 20px;
+}
+
+.modal-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.center-actions {
+  justify-content: center;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 16px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-submit {
+  flex: 2;
+  padding: 16px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.btn-submit:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Mission Thermo specific */
+.mission-status-card {
+  background-color: #f8fafc;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 30px;
+  border: 1px solid #e2e8f0;
+}
+
+.mission-status-card .mission-name {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  color: #1e293b;
+  text-align: center;
+}
+
+.mission-status-card .mission-reward {
+  text-align: center;
+  color: #b45309;
+  background: #fffbeb;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 0 0 20px 0;
+}
+
+.student-thermometer {
+  margin-bottom: 15px;
+}
+
+.student-thermo-bar {
+  height: 24px;
+  background-color: #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.student-thermo-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+  border-radius: 12px;
+  transition: width 1s ease-in-out;
+}
+
+.student-thermo-text {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: #475569;
+  font-size: 14px;
+}
+
+.mission-cheer {
+  text-align: center;
+  margin: 0;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .student-menu-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 10px;
+  }
+  
+  .menu-card {
+    padding: 30px 20px;
+  }
+  
+  .card-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+  }
+  
+  .card-content h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  
+  .student-header {
+    flex-direction: column;
+    text-align: center;
+  }
+}

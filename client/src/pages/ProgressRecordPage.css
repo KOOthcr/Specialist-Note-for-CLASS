@@ -1,0 +1,395 @@
+.progress-record-dashboard {
+  padding: 30px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 25px;
+}
+
+.record-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #333;
+  letter-spacing: -1px;
+}
+
+.record-subtitle {
+  color: #666;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.action-with-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.download-tip {
+  font-size: 11px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 학년 탭 스타일 */
+.grade-tab-container {
+  display: flex;
+  gap: 5px;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 1;
+}
+
+.grade-tab-btn {
+  padding: 12px 25px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid #eee;
+  background-color: #f1f1f1;
+  color: #888;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.grade-tab-btn.active {
+  background-color: #fff;
+  color: var(--color-primary);
+  border: 1px solid #eee;
+  border-bottom: 2px solid #fff;
+}
+
+/* 학기 탭 스타일 */
+.semester-tab-container {
+  display: flex;
+  gap: 2px;
+  background-color: #eee;
+  padding: 4px;
+  border-radius: 12px 12px 0 0;
+  width: fit-content;
+}
+
+.semester-tab {
+  padding: 8px 30px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 10px 10px 0 0;
+  transition: all 0.2s;
+}
+
+.semester-tab.active {
+  background-color: #fff;
+  color: var(--color-primary);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+/* 일괄 설정 바 (📸 스크린샷 스타일) */
+.batch-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: #fff;
+  padding: 15px 30px;
+  border-radius: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.batch-action-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.batch-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+.batch-label::before {
+  content: "🕒";
+  font-size: 18px;
+}
+
+.batch-input {
+  width: 70px;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+  outline: none;
+  background-color: #fff;
+  transition: all 0.2s;
+}
+
+.batch-input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.btn-mini-green {
+  padding: 12px 24px;
+  background-color: #2e7d32; /* 스크린샷의 짙은 초록색 */
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
+}
+
+.btn-mini-green:hover {
+  background-color: #1b5e20;
+  transform: translateY(-1px);
+}
+
+.batch-tip {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0;
+  margin-left: auto; /* 우측 정렬 */
+}
+
+/* 📸 블록 기반 레이아웃 시스템 */
+.plan-blocks-container {
+  background-color: #fff;
+  border-radius: 0 20px 20px 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+  overflow: hidden;
+}
+
+.plan-header-row {
+  display: flex;
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: center;
+  font-weight: 800;
+  color: #334155;
+}
+
+.plan-week-row {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.1s;
+}
+
+.plan-week-row:hover {
+  background-color: #f8fafc;
+}
+
+/* 📸 열 비율 설정 (차시 컬럼 분리형) */
+.col-week-header, .col-week-box { flex: 0 0 45px; border-right: 1px solid #e2e8f0; }
+.col-period-header, .col-period-box { flex: 0 0 280px; border-right: 1px solid #e2e8f0; }
+.col-lesson-header, .col-lesson-box { flex: 0 0 55px; border-right: 1px solid #e2e8f0; }
+.col-topic-header, .col-lesson-topic-container { flex: 1; display: flex; flex-direction: column; }
+.col-small-header, .col-small-box { flex: 0 0 65px; border-right: 1px solid #e2e8f0; }
+.col-small-box:last-child { border-right: none; }
+
+/* 헤더 텍스트 스타일 복구 */
+.plan-header-row > div {
+  padding: 18px 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+}
+
+.topic-title { 
+  font-size: 15px; 
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 4px; 
+}
+.topic-subtitle { 
+  font-size: 11px; 
+  color: #94a3b8; 
+  font-weight: 500; 
+}
+
+/* 데이터 입력 칸 스타일 복구 */
+.row-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 20px 10px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  background-color: transparent;
+  outline: none;
+  color: #1e293b;
+}
+
+.row-input.center { text-align: center; }
+
+/* 📸 기간 선택 및 수동 입력 필드 스타일 */
+.period-input-group {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.period-manual-input {
+  flex: 1;
+  padding-right: 35px !important; /* 아이콘 공간 확보 */
+  text-align: center;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.picker-trigger {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.period-hidden-picker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.picker-icon {
+  font-size: 16px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.picker-trigger:hover .picker-icon {
+  opacity: 1;
+}
+
+/* 차시 & 주제 통합 행 스타일 */
+.lesson-row-item {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.lesson-row-item:last-child {
+  border-bottom: none;
+}
+
+.col-lesson-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.lesson-badge-simple {
+  font-size: 14px;
+  font-weight: 800;
+  color: #10b981;
+  background-color: #ecfdf5;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #d1fae5;
+}
+
+.col-topic-box-sub {
+  flex: 1;
+  padding: 10px;
+  border-left: 1px solid #e2e8f0;
+}
+
+.lesson-textarea {
+  width: 100%;
+  height: 55px;
+  padding: 15px;
+  font-size: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  outline: none;
+  resize: none;
+  background-color: #fff;
+  transition: all 0.2s;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.lesson-textarea:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* 누계 강조 */
+.acc-highlight {
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.acc-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.no-hours-notice {
+  color: #cbd5e1;
+  font-size: 13px;
+  padding: 10px;
+  text-align: center;
+  border: 1px dashed #e2e8f0;
+  border-radius: 10px;
+}
+
+/* 프린트 스타일 */
+@media print {
+  .no-print { display: none !important; }
+  .progress-record-dashboard { padding: 0; background-color: #fff; }
+  .plan-blocks-container { box-shadow: none; border: 1px solid #000; border-radius: 0; }
+  .plan-header-row { background-color: #eee !important; -webkit-print-color-adjust: exact; }
+  .lesson-textarea { height: auto !important; min-height: 40px; border-color: #ccc; }
+  .only-print { display: block !important; text-align: center; margin-bottom: 20px; }
+}
+
+.only-print { display: none; }

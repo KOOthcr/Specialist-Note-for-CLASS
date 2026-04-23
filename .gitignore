@@ -6,3 +6,4 @@ build/
 *.log
 .firebase/
 .vscode/
+server/serviceAccountKey.json.json

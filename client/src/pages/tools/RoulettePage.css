@@ -1,0 +1,191 @@
+.roulette-layout {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 900px;
+}
+
+@media (max-width: 768px) {
+  .roulette-layout {
+    flex-direction: column-reverse;
+  }
+}
+
+.items-panel {
+  flex: 1;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: var(--color-text-main);
+}
+
+.add-item-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.item-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.item-input:focus {
+  border-color: var(--color-primary);
+}
+
+.add-btn {
+  padding: 0 16px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  flex: 1;
+  max-height: 400px;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.item-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.item-text {
+  flex: 1;
+  font-size: 15px;
+  color: var(--color-text-main);
+}
+
+.remove-item-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-sub);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.remove-item-btn:hover {
+  color: var(--color-danger);
+}
+
+.empty-items-msg {
+  color: var(--color-text-sub);
+  text-align: center;
+  margin-top: 40px;
+}
+
+.roulette-card {
+  flex: 2;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wheel-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 20px 0 40px 0;
+}
+
+.pointer {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 40px;
+  background-color: var(--color-danger);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  z-index: 10;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid white;
+  box-shadow: 0 0 0 4px #e2e8f0, 0 10px 20px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.wheel-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 0;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  white-space: nowrap;
+  font-size: 14px;
+  width: 100px;
+  text-align: right;
+  /* 텍스트가 조각의 중앙에 오도록 위치 및 여백 조정이 필요함 */
+}
+
+.roulette-result {
+  min-height: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinning-text {
+  color: var(--color-text-sub);
+  font-size: 18px;
+  animation: pulse 1s infinite;
+}
+
+.result-text {
+  font-size: 24px;
+  color: var(--color-primary-dark);
+}
+
+.ready-text {
+  color: var(--color-text-sub);
+  font-size: 16px;
+}
+
+.spin-btn {
+  width: 100%;
+  max-width: 320px;
+  padding: 16px;
+}

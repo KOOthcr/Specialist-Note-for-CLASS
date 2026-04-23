@@ -1,0 +1,239 @@
+/* DashboardLayout.css */
+
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+/* 사이드바 (Sidebar) */
+.sidebar {
+  width: 250px;
+  background-color: var(--color-white);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+
+/* 사이드바 최상단 전담노트 로고 (홈 링크) */
+.sidebar-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.sidebar-logo {
+  font-family: 'Gowun Batang', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-primary); /* 테마의 깊은 녹색 적용 */
+  text-decoration: none;
+  letter-spacing: -1px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+}
+
+.sidebar-logo:hover {
+  color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  text-shadow: 0 4px 12px rgba(56, 142, 60, 0.2);
+}
+
+.sidebar-logo::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--color-primary), transparent);
+  opacity: 0.6;
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 20px;
+  gap: 8px;
+}
+
+.profile-subtitle {
+  font-size: 14px;
+  color: var(--color-text-main);
+  font-weight: 500;
+}
+
+.profile-title {
+  font-size: 16px;
+  color: var(--color-text-main);
+  font-weight: 700;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+  overflow-y: auto;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: block;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-main);
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.nav-item:hover:not(.disabled) {
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+}
+
+.nav-item.active {
+  background-color: var(--color-text-main); /* 이미지상 검은색 배경에 흰 글씨 채택 */
+  color: var(--color-white);
+  border-radius: 0 20px 20px 0;
+  margin-right: 16px;
+}
+
+.nav-item.disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logout-btn:hover {
+  text-decoration: underline;
+  color: var(--color-error);
+}
+
+/* 우측 메인 영역 (Main Content) */
+.main-content {
+  flex: 1;
+  margin-left: 250px; /* 사이드바 크기만큼 띄우기 */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-header {
+  background-color: var(--color-white);
+  border-bottom: 2px solid var(--color-border);
+  padding: 0 40px;
+}
+
+.tab-container {
+  display: flex;
+  gap: 24px;
+}
+
+.tab-item {
+  padding: 16px 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.tab-item.active-tab {
+  color: var(--color-text-main);
+}
+
+.tab-item.active-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--color-primary); /* 활성 탭 하단 선 포인트 */
+  border-radius: 3px 3px 0 0;
+}
+
+.page-content {
+  flex: 1;
+  padding: 32px 40px;
+  background-color: #f7f9fc;
+}
+
+/* 툴 칩 (수업 도구 헤더 영역) */
+.tools-nav-header {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  align-items: center;
+  padding-bottom: 4px;
+}
+
+.tool-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 32px;
+  border: 1px solid #dee2e6;
+  background-color: var(--color-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  text-decoration: none;
+}
+
+.tool-chip:hover, .tool-chip.active {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-bg);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  transform: translateY(-2px);
+}
+
+.tool-chip .tool-icon {
+  font-size: 18px;
+}

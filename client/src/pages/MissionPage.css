@@ -1,0 +1,381 @@
+.mission-dashboard {
+  padding: 20px 40px;
+  background-color: var(--bg-body);
+  min-height: 100%;
+}
+
+.dashboard-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: white;
+  padding: 24px 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.dashboard-header-modern .title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  color: var(--color-text-main);
+}
+
+.dashboard-header-modern .subtitle {
+  margin: 0;
+  color: var(--color-text-sub);
+  font-size: 15px;
+}
+
+.class-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: bold;
+  color: var(--color-text-main);
+}
+
+.class-select-dropdown {
+  padding: 12px 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  outline: none;
+  cursor: pointer;
+  background-color: var(--bg-light);
+  color: var(--color-primary-dark);
+}
+
+/* Empty State */
+.empty-mission-state {
+  background: white;
+  border-radius: 24px;
+  padding: 80px 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-mission-state .empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.empty-mission-state h3 {
+  font-size: 24px;
+  color: var(--color-text-main);
+  margin-bottom: 10px;
+}
+
+.empty-mission-state p {
+  color: var(--color-text-sub);
+  margin-bottom: 30px;
+}
+
+.start-mission-btn {
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: bold;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #6366f1 100%);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start-mission-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(79, 70, 229, 0.4);
+}
+
+/* Active Mission Card */
+.active-mission-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.mission-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px dashed var(--border-color);
+}
+
+.mission-name {
+  font-size: 28px;
+  color: var(--color-text-main);
+  margin: 0 0 10px 0;
+}
+
+.mission-reward {
+  font-size: 18px;
+  color: var(--color-text-sub);
+  background-color: #fffbeb;
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.reset-mission-btn {
+  padding: 8px 16px;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--color-text-sub);
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reset-mission-btn:hover {
+  background-color: #fee2e2;
+  color: var(--color-danger);
+  border-color: #fca5a5;
+}
+
+/* Body Layout */
+.mission-body {
+  display: flex;
+  gap: 60px;
+}
+
+/* Thermometer UI */
+.progress-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.thermometer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.thermometer-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.thermometer-bg {
+  width: 40px;
+  height: 300px;
+  background-color: var(--bg-light);
+  border: 4px solid #e2e8f0;
+  border-radius: 20px 20px 0 0;
+  position: relative;
+  z-index: 2;
+  border-bottom: none;
+}
+
+.thermometer-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, #ef4444, #f59e0b);
+  border-radius: 16px 16px 0 0;
+  transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+}
+
+.thermometer-fill.completed {
+  background: linear-gradient(to top, #10b981, #34d399);
+}
+
+.thermometer-bulb {
+  width: 80px;
+  height: 80px;
+  background: #ef4444;
+  border: 4px solid #e2e8f0;
+  border-radius: 50%;
+  position: relative;
+  top: -10px;
+  z-index: 1;
+  transition: background-color 0.8s;
+  box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1);
+}
+
+.thermometer-bulb.completed {
+  background: #10b981;
+}
+
+.marks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mark {
+  position: absolute;
+  width: 15px;
+  height: 2px;
+  background-color: rgba(0,0,0,0.2);
+  left: 0;
+}
+
+.mark-100 { top: 0%; }
+.mark-75 { top: 25%; }
+.mark-50 { top: 50%; }
+.mark-25 { top: 75%; }
+
+.current-points-badge {
+  position: absolute;
+  top: -15px;
+  background-color: white;
+  color: var(--color-primary-dark);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.progress-text .current {
+  color: var(--color-primary);
+  font-size: 32px;
+}
+
+.progress-text .divider {
+  margin: 0 10px;
+  color: var(--color-text-sub);
+}
+
+.progress-text .target {
+  color: var(--color-text-main);
+}
+
+/* Control Section */
+.control-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.control-panel {
+  background-color: #f8fafc;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.control-panel h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
+.control-panel p {
+  color: var(--color-text-sub);
+  margin-bottom: 30px;
+}
+
+.point-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.point-btn {
+  padding: 20px;
+  font-size: 24px;
+  font-weight: 900;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.2s;
+  color: white;
+}
+
+.point-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.point-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.plus-big {
+  grid-column: span 2;
+  background-color: var(--color-primary);
+  box-shadow: 0 6px 0 var(--color-primary-dark);
+}
+
+.plus-small {
+  background-color: #10b981;
+  box-shadow: 0 6px 0 #059669;
+}
+
+.minus {
+  background-color: #ef4444;
+  box-shadow: 0 6px 0 #b91c1c;
+}
+
+/* Confetti Overlay */
+.confetti-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.5s;
+}
+
+.confetti-text {
+  font-size: 40px;
+  font-weight: 900;
+  color: #f59e0b;
+  text-shadow: 2px 2px 0px #fbbf24;
+  animation: bounce 1s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .mission-body {
+    flex-direction: column;
+    gap: 40px;
+  }
+}

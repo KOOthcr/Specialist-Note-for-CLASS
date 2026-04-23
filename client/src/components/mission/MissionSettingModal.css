@@ -1,0 +1,133 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.mission-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mission-modal-title {
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: var(--color-primary-dark);
+  font-size: 24px;
+  text-align: center;
+}
+
+.mission-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.form-group input[type="text"] {
+  padding: 14px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: var(--color-primary);
+}
+
+.score-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.score-input-wrapper input {
+  padding: 14px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  width: 120px;
+  text-align: center;
+  outline: none;
+}
+
+.score-input-wrapper input:focus {
+  border-color: var(--color-primary);
+}
+
+.score-unit {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-text-main);
+}
+
+.help-text {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-sub);
+}
+
+.mission-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  padding: 12px 24px;
+  background-color: var(--bg-light);
+  color: var(--color-text-main);
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.save-btn {
+  padding: 12px 32px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+}
+
+.save-btn:hover {
+  background-color: var(--color-primary-dark);
+}

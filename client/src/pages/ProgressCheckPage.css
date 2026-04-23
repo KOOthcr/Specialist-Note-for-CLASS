@@ -1,0 +1,349 @@
+.progress-check-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 100px);
+}
+
+/* 1. 상단 탭 스타일 */
+.group-tabs-scroll-wrapper {
+  overflow-x: auto;
+  margin-bottom: 24px;
+  padding-bottom: 5px;
+}
+
+.group-tabs {
+  display: flex;
+  gap: 12px;
+  min-width: max-content;
+}
+
+.group-tab {
+  padding: 14px 28px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px 12px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.group-tab:hover {
+  background-color: #f1f5f9;
+}
+
+.group-tab.active {
+  background-color: #fff;
+  color: var(--color-primary);
+  border-bottom-color: #fff;
+  border-top: 3px solid var(--color-primary);
+  font-weight: 800;
+  z-index: 2;
+}
+
+/* 2. 프리미엄 헤더 영역 (개편된 레이아웃) */
+.check-header-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 16px 24px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  margin-bottom: 24px;
+  border: 1px solid #f1f5f9;
+}
+
+/* 중앙 주차 네비게이터 */
+.week-navigator-center {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.week-nav-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #10b981;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.week-nav-btn:hover {
+  background-color: #f1f5f9;
+  transform: scale(1.1);
+}
+
+.week-info-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.week-num-text {
+  font-size: 20px;
+  font-weight: 900;
+  color: #065f46;
+  letter-spacing: -0.5px;
+}
+
+.week-period-text {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* 우측 날짜 선택기 */
+.date-picker-container-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f8fafc;
+  padding: 6px 15px;
+  border-radius: 50px;
+  border: 1px solid #e2e8f0;
+}
+
+.date-display-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  cursor: pointer;
+}
+
+.date-text-main {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.date-nav-btn.mini {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #64748b;
+  padding: 5px;
+  transition: color 0.2s;
+}
+
+.date-nav-btn.mini:hover {
+  color: #10b981;
+}
+
+.hidden-date-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.calendar-icon {
+  font-size: 14px;
+}
+
+.btn-save-progress {
+  padding: 12px 28px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.15);
+}
+
+.btn-save-progress:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* 3. 테이블 디자인 */
+.progress-table-card {
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+}
+
+.progress-check-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.progress-check-table th {
+  background-color: #f1f8f3;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 18px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.progress-check-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.cell-center { text-align: center; }
+.bold { font-weight: 800; }
+
+.cell-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #fcfdfc;
+  transition: all 0.2s;
+  outline: none;
+  color: #334155;
+}
+
+.cell-input:focus {
+  border-color: var(--color-primary);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.08);
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #10b981;
+  z-index: 1000;
+}
+
+/* 오늘 수업 강조 및 상태 스타일 */
+.row-off-day {
+  opacity: 0.6;
+  background-color: #f1f5f9;
+}
+
+.row-on-day {
+  background-color: #fff;
+}
+
+.row-auto-filled .cell-input {
+  border-left: 3px solid #10b981;
+}
+
+.class-num-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.today-badge-clickable {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.today-badge-clickable.active {
+  background-color: #10b981;
+  color: white;
+  box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+}
+
+.today-badge-clickable.inactive {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.today-badge-clickable:hover {
+  transform: scale(1.05);
+}
+
+.today-badge-clickable.active:hover {
+  background-color: #059669;
+}
+
+.today-badge-clickable.inactive:hover {
+  background-color: #e2e8f0;
+  color: #64748b;
+}
+
+/* 학기 선택 탭 스타일 */
+.semester-tabs-wrapper {
+  padding: 0 20px 10px 20px;
+  background-color: #f8fafc;
+}
+
+.semester-tabs {
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 5px;
+}
+
+.semester-tab {
+  padding: 8px 24px;
+  border: none;
+  background: white;
+  border-radius: 8px 8px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+  border-bottom: none;
+}
+
+.semester-tab:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.semester-tab.active {
+  background-color: white;
+  color: #059669;
+  border-top: 2px solid #059669;
+  height: calc(100% + 1px);
+  margin-bottom: -1px;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  .progress-check-container { padding: 0; }
+  .progress-table-card { border: none; box-shadow: none; }
+  .progress-check-table th { background-color: #eee !important; color: #000; }
+}
+
+@media (max-width: 992px) {
+  .check-header-premium {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .btn-save-progress { width: 100%; order: 3; }
+}

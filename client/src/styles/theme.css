@@ -1,0 +1,30 @@
+:root {
+  /* 편안한 녹색(Comfortable Green) 테마 색상 */
+  --color-primary: #388e3c; /* 깊은 녹색 */
+  --color-primary-light: #66bb6a;
+  --color-primary-dark: #2e7d32;
+  --color-primary-bg: #e8f5e9; /* 아주 연한 녹색 바탕 */
+  
+  --color-white: #ffffff;
+  --color-bg: #f9fbf9;
+  
+  --color-text-main: #2c3e50;
+  --color-text-muted: #7f8c8d;
+  --color-border: #dcdde1;
+  --color-error: #e74c3c;
+  
+  /* 그림자(Shadow) 변수 */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  
+  /* 둥근 테두리(Border Radius) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  /* 트랜지션(Transition) */
+  --transition-fast: 0.2s ease-in-out;
+  --transition-normal: 0.3s ease;
+}
