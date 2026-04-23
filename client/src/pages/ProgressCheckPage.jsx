@@ -211,7 +211,7 @@ function ProgressCheckPage() {
   }, [currentUser, selectedGroupId, currentDate, groups]);
 
   useEffect(() => {
-    if (currentUser && selectedGroupId && currentSemesterPlans.length > 0) fetchProgressData();
+    if (currentUser && selectedGroupId) fetchProgressData();
   }, [selectedGroupId, currentDate, currentUser, currentSemesterPlans, weekInfo, selectedSemester]);
 
   const fetchProgressData = async () => {
@@ -262,8 +262,12 @@ function ProgressCheckPage() {
 
       let classesToShow = [];
       if (group.type === 'grade') {
-        const classSnap = await getDocs(query(collection(db, 'users', uid, 'classes'), where('grade', '==', group.val)));
-        classesToShow = classSnap.docs.map(d => ({ id: d.id, classNum: d.data().class_number, leader: d.data().leader || '' })).sort((a, b) => a.classNum - b.classNum);
+        // 쿼리 대신 전체를 가져와서 필터링 (타입 이슈 방지)
+        const allClassSnap = await getDocs(collection(db, 'users', uid, 'classes'));
+        classesToShow = allClassSnap.docs
+          .map(d => ({ id: d.id, classNum: d.data().class_number, grade: d.data().grade, leader: d.data().leader || '' }))
+          .filter(c => String(c.grade) === String(group.val))
+          .sort((a, b) => Number(a.classNum) - Number(b.classNum));
       } else {
         const clubDoc = await getDoc(doc(db, 'users', uid, 'clubs', group.val));
         classesToShow = [{ id: group.val, classNum: group.name, leader: clubDoc.exists() ? clubDoc.data().leader || '' : '' }];
@@ -272,9 +276,11 @@ function ProgressCheckPage() {
       const finalData = [];
       classesToShow.forEach(cls => {
         const periodsToday = [];
-        if (isWeekday && timetable.length > 0) {
+        if (isWeekday && Array.isArray(timetable)) {
           for (let p = 0; p < timetable.length; p++) {
-            if (String(timetable[p][dayIdx]) === String(cls.id)) periodsToday.push(p);
+            if (Array.isArray(timetable[p]) && String(timetable[p][dayIdx]) === String(cls.id)) {
+              periodsToday.push(p);
+            }
           }
         }
 
