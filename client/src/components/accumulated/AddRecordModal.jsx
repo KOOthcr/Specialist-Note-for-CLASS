@@ -11,6 +11,9 @@ function AddRecordModal({ isOpen, onClose, students, type, onSave, selectedGroup
   const [recordDate, setRecordDate] = useState(
     new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]
   );
+  const [recordTime, setRecordTime] = useState(
+    new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[1].substring(0, 5)
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('');
   const { showAlert } = useModal();
@@ -21,6 +24,7 @@ function AddRecordModal({ isOpen, onClose, students, type, onSave, selectedGroup
       setContent('');
       setFile(null);
       setRecordDate(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]);
+      setRecordTime(new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[1].substring(0, 5));
       setIsSubmitting(false);
       setSubmitStatus('');
     }
@@ -67,6 +71,7 @@ function AddRecordModal({ isOpen, onClose, students, type, onSave, selectedGroup
         type,
         content: baseContent,
         date: recordDate,
+        time: recordTime,
         ...(fileUrl && { fileUrl, fileName })
       };
 
@@ -105,9 +110,15 @@ function AddRecordModal({ isOpen, onClose, students, type, onSave, selectedGroup
           </div>
         </div>
 
-        <div className="form-group" style={{ marginBottom: '20px' }}>
-          <label className="input-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>📅 기록 날짜</label>
-          <input type="date" className="auth-input" value={recordDate} onChange={(e) => setRecordDate(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '12px' }} />
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+          <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+            <label className="input-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>📅 기록 날짜</label>
+            <input type="date" className="auth-input" value={recordDate} onChange={(e) => setRecordDate(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '12px' }} />
+          </div>
+          <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+            <label className="input-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>🕒 기록 시간</label>
+            <input type="time" className="auth-input" value={recordTime} onChange={(e) => setRecordTime(e.target.value)} style={{ width: '100%', padding: '12px', borderRadius: '12px' }} />
+          </div>
         </div>
 
         {type !== 'text' && (

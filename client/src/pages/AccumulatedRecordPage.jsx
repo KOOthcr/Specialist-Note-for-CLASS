@@ -372,7 +372,7 @@ function AccumulatedRecordPage() {
                                 </span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                                   <span style={{ fontSize: '13px', color: '#999', fontWeight: 'bold' }}>
-                                    📅 {record.date} {record.timestamp ? ` ${new Date(record.timestamp.seconds * 1000).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}` : ''}
+                                    📅 {record.date} {record.time || (record.timestamp ? new Date(record.timestamp.seconds * 1000).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '')}
                                   </span>
                                   <div style={{ display: 'flex', gap: '8px' }}>
                                     <button onClick={() => openEditModal(record)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '12px', padding: '2px 5px' }}>수정</button>
