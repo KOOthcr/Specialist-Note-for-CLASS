@@ -47,8 +47,19 @@ function ProgressRecordPage() {
         setCurrentGroupId(allGroups[0].id);
       }
 
-      const docRef = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v2');
-      const snap = await getDoc(docRef);
+      // 1. 최신 데이터(v2) 시도
+      let docRef = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v2');
+      let snap = await getDoc(docRef);
+      
+      // 2. 최신 데이터가 없으면 구버전(annual_plans) 시도
+      if (!snap.exists()) {
+        const oldRef = doc(db, 'users', uid, 'curriculum', 'annual_plans');
+        const oldSnap = await getDoc(oldRef);
+        if (oldSnap.exists()) {
+          snap = oldSnap;
+          console.log("Old curriculum data (v1) found and migrated.");
+        }
+      }
       
       const emptyPlan = () => Array.from({ length: 20 }, (_, i) => ({
         week: i + 1, grades: {}
@@ -69,14 +80,18 @@ function ProgressRecordPage() {
         });
       };
 
-      if (snap.exists()) {
+      if (snap && snap.exists()) {
         const data = snap.data();
-        if (data.plans && !data.semester1) {
+        // 구조에 따른 유연한 데이터 매핑
+        if (data.semester1 || data.semester2) {
+          setSemester1Plans(migrate(data.semester1) || emptyPlan());
+          setSemester2Plans(migrate(data.semester2) || emptyPlan());
+        } else if (data.plans) {
           setSemester1Plans(migrate(data.plans));
           setSemester2Plans(emptyPlan());
         } else {
-          setSemester1Plans(migrate(data.semester1) || emptyPlan());
-          setSemester2Plans(migrate(data.semester2) || emptyPlan());
+          setSemester1Plans(emptyPlan());
+          setSemester2Plans(emptyPlan());
         }
       } else {
         setSemester1Plans(emptyPlan());
