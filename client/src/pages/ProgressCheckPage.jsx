@@ -59,12 +59,30 @@ function ProgressCheckPage() {
       setGroups(allGroups);
       if (allGroups.length > 0) setSelectedGroupId(allGroups[0].id);
 
-      const planRef = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v2');
-      const planSnap = await getDoc(planRef);
-      if (planSnap.exists()) {
+      // 1. 최신 데이터(v2) 시도
+      let planRef = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v2');
+      let planSnap = await getDoc(planRef);
+      
+      // 2. 최신 데이터가 없으면 구버전(annual_plans) 시도
+      if (!planSnap.exists()) {
+        const oldRef = doc(db, 'users', uid, 'curriculum', 'annual_plans');
+        const oldSnap = await getDoc(oldRef);
+        if (oldSnap.exists()) {
+          planSnap = oldSnap;
+          console.log("Old curriculum data (v1) found for Progress Check.");
+        }
+      }
+
+      if (planSnap && planSnap.exists()) {
         const data = planSnap.data();
-        setSemester1Plans(data.semester1 || []);
-        setSemester2Plans(data.semester2 || []);
+        // 구조에 따른 유연한 데이터 매핑
+        if (data.semester1 || data.semester2) {
+          setSemester1Plans(data.semester1 || []);
+          setSemester2Plans(data.semester2 || []);
+        } else if (data.plans) {
+          setSemester1Plans(data.plans);
+          setSemester2Plans([]);
+        }
       }
     } catch (e) { console.error(e); }
   };
