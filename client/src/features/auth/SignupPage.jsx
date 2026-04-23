@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './auth.css';
-import { auth, db } from '../../firebase/config';
+import { auth } from '../../firebase/config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, collection, writeBatch } from 'firebase/firestore';
 import { useModal } from '../../components/common/GlobalModal';
 
 function SignupPage() {
   const { showAlert } = useModal();
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,27 +67,29 @@ function SignupPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // 2. Firestore에 선생님 추가 정보 저장
-      const teacherData = {
-        uid: user.uid,
-        email: user.email,
-        name,
-        school_name: schoolName,
-        subject,
-        room_name: roomName || '',
-        assigned_classes: assignedClasses,
-        created_at: new Date().toISOString()
-      };
-
-      await setDoc(doc(db, "users", user.uid), teacherData);
-
-      // 3. 학급 서브 컬렉션 초기화
-      const batch = writeBatch(db);
-      assignedClasses.forEach(cls => {
-        const classRef = doc(collection(db, 'users', user.uid, 'classes'));
-        batch.set(classRef, { ...cls, created_at: new Date().toISOString() });
+      // 2. 백엔드 API를 통해 선생님 정보 저장 (보안 강화)
+      const idToken = await user.getIdToken();
+      
+      const response = await fetch(`${apiUrl}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          name,
+          school_name: schoolName,
+          subject,
+          room_name: roomName || '',
+          room_code: '', // 초기값
+          assigned_classes: assignedClasses
+        })
       });
-      await batch.commit();
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '서버 저장 중 오류가 발생했습니다.');
+      }
 
       // 4. 로컬 스토리지 저장 (기존 코드 유지)
       localStorage.setItem('teacherName', name);
