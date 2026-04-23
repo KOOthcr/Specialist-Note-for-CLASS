@@ -1,0 +1,8 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if true; // 학생들도 사진을 업로드해야 하므로 우선 전체 허용합니다.
+    }
+  }
+}
