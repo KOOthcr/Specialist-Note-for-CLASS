@@ -3,10 +3,14 @@ import React from 'react';
 // 학생용 성장 기록 입력 모달 (StudentPage에서 분리)
 function StudentGrowthModal({ categories, growthType, setGrowthType, growthRecords, setGrowthRecords, growthMemo, setGrowthMemo, selectedDate, setSelectedDate, onSubmit, onClose }) {
   const getDayOfWeek = (dateStr) => {
+    if (!dateStr) return '';
     const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     return days[d.getDay()];
   };
+
+  const day = getDayOfWeek(selectedDate);
 
   return (
     <div className="modal-body">
@@ -17,8 +21,30 @@ function StudentGrowthModal({ categories, growthType, setGrowthType, growthRecor
       <div className="form-group">
         <label>측정 날짜</label>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <input type="date" className="modal-input" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={{ fontWeight: 'bold', border: '1px solid #e2e8f0', width: '100%', paddingRight: '45px' }} />
-          <span style={{ position: 'absolute', right: '40px', fontWeight: 'bold', color: 'var(--color-primary)' }}>({getDayOfWeek(selectedDate)})</span>
+          <input 
+            type="date" 
+            className="modal-input" 
+            value={selectedDate} 
+            onChange={(e) => setSelectedDate(e.target.value)} 
+            style={{ 
+              fontWeight: 'bold', 
+              border: '1px solid #e2e8f0', 
+              width: '100%', 
+              paddingRight: '80px' // 요일 공간 확보
+            }} 
+          />
+          {day && (
+            <span style={{ 
+              position: 'absolute', 
+              right: '45px', // 달력 아이콘 왼쪽으로 이동
+              fontWeight: 'bold', 
+              color: 'var(--color-primary)',
+              pointerEvents: 'none', // 클릭 방해 방지
+              fontSize: '14px'
+            }}>
+              ({day})
+            </span>
+          )}
         </div>
       </div>
 
