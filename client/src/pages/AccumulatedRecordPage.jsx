@@ -371,7 +371,9 @@ function AccumulatedRecordPage() {
                                   {record.type === 'text' ? '📋 누가기록' : record.type === 'photo' ? '🖼️ 사진' : '▶️ 동영상'}
                                 </span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                  <span style={{ fontSize: '13px', color: '#999', fontWeight: 'bold' }}>📅 {record.date}</span>
+                                  <span style={{ fontSize: '13px', color: '#999', fontWeight: 'bold' }}>
+                                    📅 {record.date} {record.timestamp ? ` ${new Date(record.timestamp.seconds * 1000).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}` : ''}
+                                  </span>
                                   <div style={{ display: 'flex', gap: '8px' }}>
                                     <button onClick={() => openEditModal(record)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '12px', padding: '2px 5px' }}>수정</button>
                                     <button onClick={() => handleDeleteRecord(record.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '12px', padding: '2px 5px' }}>삭제</button>
