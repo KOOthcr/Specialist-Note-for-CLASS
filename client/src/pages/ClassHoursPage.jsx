@@ -22,8 +22,7 @@ function ClassHoursPage() {
 
   // 실제 생성된 반 및 동아리 목록 가져오기
   useEffect(() => {
-    const fetchGroups = async () => {
-      const user = auth.currentUser;
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (!user) return;
 
       try {
@@ -45,9 +44,9 @@ function ClassHoursPage() {
       } catch (error) {
         console.error("Error fetching groups:", error);
       }
-    };
+    });
 
-    fetchGroups();
+    return () => unsubscribe();
   }, []);
 
   const handleSelectChange = (rowIndex, colIndex, value) => {
