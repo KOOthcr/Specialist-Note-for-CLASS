@@ -40,6 +40,25 @@ function LoginPage() {
   useEffect(() => {
     const randomIdx = Math.floor(Math.random() * GREETINGS.length);
     setGreeting(GREETINGS[randomIdx]);
+
+    // QR 코드 접속이나 재접속 시 이전 로그인 세션이 남아있을 수 있으므로
+    // 로그인 페이지에 진입하면 항상 로그아웃 처리를 하여 깨끗한 상태로 시작합니다.
+    const cleanSlate = async () => {
+      try {
+        await auth.signOut();
+        // 세션 초기화 후 로컬 저장소의 일부 정보도 정리 (필요시)
+        localStorage.removeItem('teacherName');
+      } catch (err) {
+        console.error("Sign out error:", err);
+      }
+    };
+    cleanSlate();
+
+    // URL 파라미터 체크 (예: QR 코드 주소를 /?mode=student 로 설정한 경우)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'student') {
+      setActiveMode('student');
+    }
   }, []);
 
   const handleTeacherLogin = async (e) => {
