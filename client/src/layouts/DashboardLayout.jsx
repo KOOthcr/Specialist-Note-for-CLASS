@@ -46,6 +46,9 @@ function DashboardLayout() {
             setSessionCode(code);
           }
         }
+      } else {
+        // 로그인되어 있지 않은데 대시보드 접근 시 로그인 페이지로 강제 이동
+        navigate('/', { replace: true });
       }
     });
 
@@ -62,10 +65,18 @@ function DashboardLayout() {
     return '학생명단관리';
   };
 
-  const handleLogout = () => {
-    showConfirm("정말 로그아웃 하시겠습니까?", () => {
-      showAlert("로그아웃 되었습니다.", "알림");
-      navigate('/');
+  const handleLogout = async () => {
+    showConfirm("정말 로그아웃 하시겠습니까?", async () => {
+      try {
+        await auth.signOut();
+        localStorage.removeItem('teacherName');
+        localStorage.removeItem('roomName');
+        showAlert("로그아웃 되었습니다.", "알림");
+        navigate('/', { replace: true });
+      } catch (err) {
+        console.error("Logout error:", err);
+        showAlert("로그아웃 중 오류가 발생했습니다.", "오류", "error");
+      }
     }, "로그아웃 확인");
   };
 
