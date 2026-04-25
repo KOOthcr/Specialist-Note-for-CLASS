@@ -19,6 +19,12 @@ function DashboardLayout() {
   const [roomName, setRoomName] = useState('체육관');
   const [sessionCode, setSessionCode] = useState('');
   const [isProfileEditOpen, setIsProfileEditOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 모바일 사이드바 열림 상태
+
+  // 페이지 이동 시 모바일에서는 사이드바를 닫아줍니다
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     // 회원가입 시 저장했던 정보를 임시로 불러옵니다
@@ -84,9 +90,23 @@ function DashboardLayout() {
   };
 
   return (
-    <div className="layout-container">
+    <div className={`layout-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+      {/* 모바일 전용 햄버거 메뉴 버튼 */}
+      <button 
+        className="mobile-menu-toggle" 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        aria-label="메뉴 열기"
+      >
+        {isSidebarOpen ? '✕' : '☰'}
+      </button>
+
+      {/* 모바일 전용 오버레이 (배경 클릭 시 닫기) */}
+      {isSidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
       {/* 1. 좌측 사이드바 */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         {/* 로고 영역 (홈 버튼 역할) */}
         <div className="sidebar-logo-container">
           <a href="/main" className="sidebar-logo">
