@@ -1,0 +1,176 @@
+.whiteboard-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 150px);
+  background-color: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid #e2e8f0;
+}
+
+/* 상단 툴바 */
+.whiteboard-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar-left, .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border-right: 1px solid #e2e8f0;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+}
+
+.font-size-select {
+  padding: 4px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+}
+
+.toolbar-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  color: #475569;
+  transition: all 0.2s;
+}
+
+.toolbar-btn:hover {
+  background-color: #f1f5f9;
+  color: var(--color-primary);
+}
+
+.toolbar-btn.active {
+  background-color: #e2e8f0;
+  color: var(--color-primary);
+}
+
+.color-picker-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.color-bar {
+  width: 16px;
+  height: 3px;
+  margin-top: 2px;
+  background-color: #000;
+}
+
+.auto-save-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  background: white;
+}
+
+.action-btn:hover {
+  background: #f8fafc;
+}
+
+.btn-save {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+}
+
+.btn-save:hover {
+  background: var(--color-primary-dark);
+}
+
+/* 칠판 영역 */
+.blackboard-area {
+  flex: 1;
+  background-color: #003d33; /* 짙은 칠판색 */
+  color: #ffffff;
+  padding: 40px;
+  font-family: 'Gowun Batang', serif;
+  font-size: 40px;
+  line-height: 1.5;
+  overflow-y: auto;
+  outline: none;
+  cursor: text;
+  position: relative;
+}
+
+.blackboard-area:empty::before {
+  content: '이곳에 내용을 입력하세요...';
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* 글자수 표시 */
+.char-count {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+/* 플로팅 버튼 */
+.floating-add-btn {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background-color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #475569;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.floating-add-btn:hover {
+  transform: scale(1.1);
+  background-color: #cbd5e1;
+}
