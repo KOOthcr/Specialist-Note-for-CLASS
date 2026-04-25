@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useModal } from '../common/GlobalModal';
 import './MissionSettingModal.css';
 
 function MissionSettingModal({ isOpen, onClose, onSave }) {
+  const { showAlert } = useModal();
   const [missionName, setMissionName] = useState('');
   const [reward, setReward] = useState('');
   const [targetScore, setTargetScore] = useState(50);
@@ -11,7 +13,7 @@ function MissionSettingModal({ isOpen, onClose, onSave }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!missionName.trim() || !reward.trim() || targetScore <= 0) {
-      alert('모든 항목을 올바르게 입력해주세요.');
+      showAlert('모든 항목을 올바르게 입력해주세요.', '입력 오류', 'error');
       return;
     }
     

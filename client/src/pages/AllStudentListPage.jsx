@@ -1,101 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { auth, db } from '../firebase/config';
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
-import * as XLSX from 'xlsx';
+import React, { useState } from 'react';
+import { db } from '../firebase/config';
+import { collection, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useModal } from '../components/common/GlobalModal';
 import StudentTable from '../components/students/StudentTable';
 import StudentListHeader from '../components/students/StudentListHeader';
 import StudentModal from '../components/students/StudentModal';
 import ClubManagementModal from '../components/students/ClubManagementModal';
+import { useAllStudents } from '../hooks/useAllStudents';
+import { exportAllStudentsToExcel } from '../utils/studentExportUtils';
 import './StudentList.css';
 
+/**
+ * AllStudentListPage: 전체 학생 명단을 관리하고 동아리를 관리하는 페이지
+ */
 function AllStudentListPage() {
   const { showAlert, showConfirm } = useModal();
-  const [students, setStudents] = useState([]);
-  const [clubs, setClubs] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+  const { students, clubs, currentUser, fetchStudents, fetchClubs } = useAllStudents();
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClubModalOpen, setIsClubModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
-
-  const handleExcelExport = () => {
-    if (students.length === 0) {
-      showAlert("출력할 학생 데이터가 없습니다.", "알림", "error");
-      return;
-    }
-
-    const workbook = XLSX.utils.book_new();
-    
-    // 학급별로 그룹화 (학년-반 키 생성)
-    const grouped = {};
-    students.forEach(s => {
-      const key = `${s.grade}-${s.class_number}`;
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(s);
-    });
-
-    // 각 학급별 시트 생성
-    Object.keys(grouped).sort((a, b) => {
-      const [gA, cA] = a.split('-').map(Number);
-      const [gB, cB] = b.split('-').map(Number);
-      if (gA !== gB) return gA - gB;
-      return cA - cB;
-    }).forEach(key => {
-      const classStudents = grouped[key].sort((a, b) => a.student_number - b.student_number);
-      const data = classStudents.map((s, idx) => ({
-        '순번': idx + 1,
-        '학년': s.grade,
-        '반': s.class_number,
-        '번호': s.student_number,
-        '이름': s.name,
-        '성별': s.gender,
-        '동아리': s.club || ''
-      }));
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      XLSX.utils.book_append_sheet(workbook, worksheet, `${key}반`);
-    });
-
-    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
-    XLSX.writeFile(workbook, `전체학생명단_${today}.xlsx`);
-  };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setCurrentUser(user);
-        fetchStudents(user.uid);
-        fetchClubs(user.uid);
-      } else {
-        setCurrentUser(null);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const fetchStudents = async (uid) => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'users', uid, 'students'));
-      const studentList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setStudents(studentList.sort((a, b) => {
-        if (a.grade !== b.grade) return a.grade - b.grade;
-        if (a.class_number !== b.class_number) return a.class_number - b.class_number;
-        return a.student_number - b.student_number;
-      }));
-    } catch (error) {
-      console.error("Error fetching students: ", error);
-    }
-  };
-
-  const fetchClubs = async (uid) => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'users', uid, 'clubs'));
-      const clubList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setClubs(clubList);
-    } catch (error) {
-      console.error("Error fetching clubs: ", error);
-    }
-  };
 
   const handleOpenModal = (student = null) => {
     setSelectedStudent(student);
@@ -195,8 +119,8 @@ function AllStudentListPage() {
         onOpenModal={() => handleOpenModal(null)}
         onOpenClubModal={() => setIsClubModalOpen(true)}
         clubs={clubs}
-        onRefresh={() => fetchStudents(currentUser.uid)}
-        onExcelExport={handleExcelExport}
+        onRefresh={() => fetchStudents(currentUser?.uid)}
+        onExcelExport={() => exportAllStudentsToExcel(students, showAlert)}
       />
 
       <StudentTable 

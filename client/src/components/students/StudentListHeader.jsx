@@ -123,7 +123,7 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
   // 엑셀 파일 업로드 처리 (동아리용)
   const handleClubExcelUpload = async (e) => {
     if (!currentUser) {
-      alert("로그인이 필요합니다.");
+      showAlert("로그인이 필요합니다.", "권한 오류", "error");
       return;
     }
     const file = e.target.files[0];
@@ -154,11 +154,11 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
         });
 
         if (clubData.length === 0) {
-          alert("유효한 데이터가 없습니다.");
+          showAlert("유효한 데이터가 없습니다.", "데이터 오류", "error");
           return;
         }
 
-        if (window.confirm(`${clubData.length}명의 동아리 정보를 업데이트하시겠습니까?`)) {
+        showConfirm(`${clubData.length}명의 동아리 정보를 업데이트하시겠습니까?`, async () => {
           const studentsRef = collection(db, 'users', currentUser.uid, 'students');
           const snapshot = await getDocs(studentsRef);
           const existingStudents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -182,15 +182,15 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
 
           if (updatedCount > 0) {
             await batch.commit();
-            alert(`${updatedCount}명의 정보가 업데이트되었습니다.`);
+            showAlert(`${updatedCount}명의 정보가 업데이트되었습니다.`, "업데이트 완료");
             if (fetchStudents) fetchStudents(currentUser.uid);
           } else {
-            alert("일치하는 학생이 없습니다.");
+            showAlert("일치하는 학생이 없습니다.", "데이터 불일치", "error");
           }
-        }
+        }, "동아리 정보 업데이트");
       } catch (error) {
         console.error("Club upload error:", error);
-        alert("오류가 발생했습니다.");
+        showAlert("오류가 발생했습니다.", "오류", "error");
       }
       if (clubFileInputRef.current) clubFileInputRef.current.value = '';
     };

@@ -5,6 +5,9 @@ import { auth, db } from '../../firebase/config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { useModal } from '../../components/common/GlobalModal';
+import TeacherLoginForm from './TeacherLoginForm';
+import StudentLoginForm from './StudentLoginForm';
+import StudentModeSelectionModal from './StudentModeSelectionModal';
 
 const GREETINGS = [
   "오늘도 수고하셨습니다 선생님! 🌿",
@@ -215,115 +218,34 @@ function LoginPage() {
 
         <div style={{ padding: '32px' }}>
           {activeMode === 'teacher' ? (
-            <form className="auth-form" onSubmit={handleTeacherLogin}>
-              <div className="input-group">
-                <label className="input-label" htmlFor="email">이메일</label>
-                <input id="email" type="email" className="auth-input" placeholder="teacher@school.kr" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </div>
-              <div className="input-group">
-                <label className="input-label" htmlFor="password">비밀번호</label>
-                <input id="password" type="password" className="auth-input" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
-              </div>
-              <button type="submit" className="auth-button">로그인</button>
-              
-              <div className="auth-footer" style={{ marginTop: '24px' }}>
-                계정이 없으신가요? <Link to="/signup" className="auth-link">회원가입</Link>
-              </div>
-            </form>
+            <TeacherLoginForm 
+              email={email} 
+              setEmail={setEmail} 
+              password={password} 
+              setPassword={setPassword} 
+              handleTeacherLogin={handleTeacherLogin} 
+            />
           ) : (
-            <form className="auth-form" onSubmit={handleStudentLogin}>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '24px', textAlign: 'center' }}>
-                선생님이 알려주신 방 이름과 내 정보를 입력해 주세요!
-              </p>
-              
-              <div className="input-group">
-                <label className="input-label" htmlFor="roomName">전담 교실 (방 찾기)</label>
-                <input id="roomName" type="text" className="auth-input" placeholder="예: 체육관" value={roomName} onChange={(e) => setRoomName(e.target.value)} required />
-              </div>
-              
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <div className="input-group" style={{ flex: 1 }}>
-                  <label className="input-label" htmlFor="grade">학년</label>
-                  <input id="grade" type="number" className="auth-input" placeholder="숫자" value={grade} onChange={(e) => setGrade(e.target.value)} required />
-                </div>
-                <div className="input-group" style={{ flex: 1 }}>
-                  <label className="input-label" htmlFor="classNumber">반</label>
-                  <input id="classNumber" type="number" className="auth-input" placeholder="숫자" value={classNumber} onChange={(e) => setClassNumber(e.target.value)} required />
-                </div>
-                <div className="input-group" style={{ flex: 1 }}>
-                  <label className="input-label" htmlFor="studentNumber">번호</label>
-                  <input id="studentNumber" type="number" className="auth-input" placeholder="숫자" value={studentNumber} onChange={(e) => setStudentNumber(e.target.value)} required />
-                </div>
-              </div>
-
-              <div className="input-group">
-                <label className="input-label" htmlFor="studentName">이름</label>
-                <input id="studentName" type="text" className="auth-input" placeholder="예: 김민수" value={studentName} onChange={(e) => setStudentName(e.target.value)} required />
-              </div>
-
-              <div className="input-group" style={{ marginTop: '16px' }}>
-                <label className="input-label" htmlFor="roomCode">학생 입장 코드 (6자리 숫자)</label>
-                <input 
-                  id="roomCode" 
-                  type="text" 
-                  className="auth-input" 
-                  placeholder="선생님 화면의 숫자 6자리 입력" 
-                  value={roomCode} 
-                  onChange={(e) => setRoomCode(e.target.value)} 
-                  required 
-                  maxLength={6} 
-                  style={{ textAlign: 'center', fontSize: '20px', letterSpacing: '8px', fontWeight: 'bold' }}
-                />
-              </div>
-              
-              <button type="submit" className="auth-button" style={{ backgroundColor: '#2196F3' }}>🚀 교실 바로 입장하기</button>
-            </form>
+            <StudentLoginForm 
+              roomName={roomName} setRoomName={setRoomName}
+              grade={grade} setGrade={setGrade}
+              classNumber={classNumber} setClassNumber={setClassNumber}
+              studentNumber={studentNumber} setStudentNumber={setStudentNumber}
+              studentName={studentName} setStudentName={setStudentName}
+              roomCode={roomCode} setRoomCode={setRoomCode}
+              handleStudentLogin={handleStudentLogin}
+            />
           )}
         </div>
       </div>
 
-      {/* 모드 선택 모달 */}
-      {showModeSelection && tempStudentData && (
-        <div className="global-modal-overlay" onClick={() => setShowModeSelection(false)}>
-          <div className="global-modal-content" onClick={e => e.stopPropagation()} style={{ width: '400px', textAlign: 'center' }}>
-            <div className="modal-icon" style={{ backgroundColor: '#f0f4ff', color: '#2196F3' }}>🏫</div>
-            <h3 className="modal-title" style={{ marginTop: '16px' }}>어떤 반으로 입장할까요?</h3>
-            <p className="modal-text">동아리 활동을 하는 학생이군요! 오늘 수업에 맞게 선택해 주세요.</p>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
-              <button 
-                onClick={() => proceedLogin(tempStudentData, 'class')}
-                style={{
-                  padding: '16px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#fff',
-                  fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                }}
-                onMouseOver={e => e.currentTarget.style.borderColor = '#2196F3'}
-                onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}
-              >
-                <span>📘</span> {tempStudentData.grade}학년 {tempStudentData.classNumber}반 (원래 학급)
-              </button>
-              
-              <button 
-                onClick={() => proceedLogin(tempStudentData, 'club')}
-                style={{
-                  padding: '16px', borderRadius: '12px', border: '2px solid #e2e8f0', backgroundColor: '#fff',
-                  fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                }}
-                onMouseOver={e => e.currentTarget.style.borderColor = '#4CAF50'}
-                onMouseOut={e => e.currentTarget.style.borderColor = '#e2e8f0'}
-              >
-                <span>⚽</span> {tempStudentData.club} (동아리반)
-              </button>
-            </div>
-            
-            <div className="modal-actions" style={{ marginTop: '24px' }}>
-              <button className="btn-modal-cancel" onClick={() => setShowModeSelection(false)} style={{ width: '100%' }}>취소</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 모드 선택 모달 — 컴포넌트로 분리 */}
+      <StudentModeSelectionModal 
+        show={showModeSelection} 
+        studentData={tempStudentData} 
+        onSelect={proceedLogin} 
+        onCancel={() => setShowModeSelection(false)} 
+      />
     </div>
   );
 }

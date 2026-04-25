@@ -3,12 +3,15 @@ import './StudentPage.css';
 import { auth, db } from '../firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, doc, setDoc, onSnapshot, serverTimestamp, addDoc, query, where } from 'firebase/firestore';
+import { useModal } from '../components/common/GlobalModal';
 import StudentGrowthModal from '../components/student/StudentGrowthModal';
 import StudentDiaryModal from '../components/student/StudentDiaryModal';
 import StudentQnaModal from '../components/student/StudentQnaModal';
 import StudentMissionModal from '../components/student/StudentMissionModal';
+import { StudentHeader, StudentMenu } from '../components/student/StudentPageComponents';
 
 function StudentPage() {
+  const { showAlert } = useModal();
   // 모달 관리 (null, 'attendance', 'growth', 'diary', 'qna', 'mission')
   const [activeModal, setActiveModal] = useState(null);
 
@@ -145,7 +148,7 @@ function StudentPage() {
   const handleSubmit = async (type) => {
     if (type === 'growth') {
       if (!teacherUid || !classDocId || !studentDocId || !growthType) {
-        alert('데이터베이스 연결 정보를 찾을 수 없습니다. (교사 미로그인 상태이거나 학급/학생 정보 없음)');
+        showAlert('데이터베이스 연결 정보를 찾을 수 없습니다. (교사 미로그인 상태이거나 학급/학생 정보 없음)', '오류', 'error');
         return;
       }
       const docId = `${selectedDate}_${entryMode}_${classDocId}_${growthType}`;
@@ -153,21 +156,21 @@ function StudentPage() {
       const values = growthRecords.map(r => r.value).filter(v => v !== '');
       try {
         await setDoc(docRef, { date: selectedDate, categoryId: growthType, groupId: classDocId, groupType: entryMode, records: { [studentDocId]: { values, value: values[0] || '', note: growthMemo } }, updated_at: new Date().toISOString() }, { merge: true });
-        alert('성장 기록이 성공적으로 제출되어 선생님 기록표에 즉시 반영되었습니다! 😊');
-      } catch (e) { console.error('기록 제출 실패:', e); alert('기록 제출 중 오류가 발생했습니다.'); }
+        showAlert('성장 기록이 성공적으로 제출되어 선생님 기록표에 즉시 반영되었습니다! 😊', '제출 완료');
+      } catch (e) { console.error('기록 제출 실패:', e); showAlert('기록 제출 중 오류가 발생했습니다.', '오류', 'error'); }
     } else if (type === 'diary' || type === 'qna') {
-      if (!teacherUid || !studentDocId) { alert('데이터베이스 연결 정보를 찾을 수 없습니다.'); return; }
+      if (!teacherUid || !studentDocId) { showAlert('데이터베이스 연결 정보를 찾을 수 없습니다.', '오류', 'error'); return; }
       const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
       const text = type === 'diary' ? diaryText : qnaText;
-      if (!text.trim()) { alert('내용을 입력해주세요.'); return; }
+      if (!text.trim()) { showAlert('내용을 입력해주세요.', '알림'); return; }
       const collectionName = type === 'diary' ? 'accumulated_records' : 'student_questions';
       try {
         await addDoc(collection(db, 'users', teacherUid, collectionName), { type: 'text', content: type === 'diary' ? `[체육일기] ${text}` : text, date: today, studentId: studentDocId, studentName: studentInfo.name, grade: studentInfo.grade, classNum: studentInfo.classNum, studentNum: studentInfo.studentNum, club: studentInfo.club, timestamp: serverTimestamp(), isStudentEntry: true });
-        alert(`${type === 'diary' ? '체육 일기가' : '선생님께 한마디가'} 성공적으로 전달되었습니다! 😊`);
+        showAlert(`${type === 'diary' ? '체육 일기가' : '선생님께 한마디가'} 성공적으로 전달되었습니다! 😊`, '전달 완료');
         closeModal();
-      } catch (e) { console.error('저장 실패:', e); alert('저장 중 오류가 발생했습니다.'); }
+      } catch (e) { console.error('저장 실패:', e); showAlert('저장 중 오류가 발생했습니다.', '오류', 'error'); }
     } else {
-      alert('기록이 성공적으로 제출되었습니다! 선생님께서 확인하실 거예요. 😊');
+      showAlert('기록이 성공적으로 제출되었습니다! 선생님께서 확인하실 거예요. 😊', '제출 완료');
       closeModal();
     }
   };
@@ -189,35 +192,8 @@ function StudentPage() {
 
   return (
     <div className="student-page-container">
-      <header className="student-header">
-        <div className="school-icon">{entryMode === 'club' ? '⚽' : '🏫'}</div>
-        <div className="student-greeting">
-          <h1>
-            {entryMode === 'club' ? `${studentInfo.club}, ` : `${studentInfo.grade}학년 ${studentInfo.classNum}반, `}
-            <strong>{studentInfo.name}</strong> 학생
-          </h1>
-          <p>오늘도 즐거운 체육(전담) 수업 함께 만들어가요! 😊</p>
-        </div>
-      </header>
-
-      <main className="student-menu-grid">
-        <button className="menu-card card-green" onClick={() => setActiveModal('growth')}>
-          <div className="card-icon">📏</div>
-          <div className="card-content"><h3>성장 기록 입력</h3><p>오늘 나의 팝스(PAPS)나 활동 측정 기록을 입력해요.</p></div>
-        </button>
-        <button className="menu-card card-orange" onClick={() => setActiveModal('diary')}>
-          <div className="card-icon">📓</div>
-          <div className="card-content"><h3>오늘의 체육 일기</h3><p>오늘 수업에서 배운 점이나 느낀 점을 짧게 기록해요.</p></div>
-        </button>
-        <button className="menu-card card-purple" onClick={() => setActiveModal('qna')}>
-          <div className="card-icon">💬</div>
-          <div className="card-content"><h3>선생님께 한마디</h3><p>질문이 있거나 선생님께 하고 싶은 말이 있다면 적어주세요.</p></div>
-        </button>
-        <button className="menu-card card-pink" onClick={() => setActiveModal('mission')}>
-          <div className="card-icon">🎯</div>
-          <div className="card-content"><h3>우리 반 미션 진행 상황</h3><p>현재 우리 반의 단체 칭찬 점수와 미션 현황을 확인해요!</p></div>
-        </button>
-      </main>
+      <StudentHeader entryMode={entryMode} studentInfo={studentInfo} />
+      <StudentMenu setActiveModal={setActiveModal} />
 
       {activeModal && (
         <div className="student-modal-overlay" onClick={closeModal}>
