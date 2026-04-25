@@ -361,7 +361,7 @@ function ProgressCheckPage() {
             const saved = savedRecords[rowKey];
             const isInvalidP = !saved.lesson_count || saved.period === saved.lesson_count || !isNaN(saved.period);
             finalData.push({
-              ...saved, classNum: cls.classNum, periodIdx: null, baseCalcPeriod: baseLessonNum + lessonsBeforeToday,
+              ...saved, classNum: cls.classNum, periodIdx: null, baseCalcPeriod: baseLessonNum + lessonsInWeek,
               period: isInvalidP ? '-' : saved.period,
               lesson_count: saved.lesson_count || saved.period || String(finalPeriod),
               isTodayLesson: saved.isTodayLesson !== undefined ? saved.isTodayLesson : false
@@ -369,7 +369,7 @@ function ProgressCheckPage() {
           } else {
             finalData.push({
               classNum: cls.classNum, periodIdx: null, period: '-', lesson_count: String(finalPeriod),
-              baseCalcPeriod: baseLessonNum + lessonsBeforeToday, leader: cls.leader || '', activity: autoActivity, note: '',
+              baseCalcPeriod: baseLessonNum + lessonsInWeek, leader: cls.leader || '', activity: autoActivity, note: '',
               isAutoFilled: weekInfo.index !== -1, isTodayLesson: false
             });
           }
