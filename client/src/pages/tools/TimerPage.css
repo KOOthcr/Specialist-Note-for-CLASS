@@ -240,7 +240,7 @@ input.number-box:disabled {
 .adjust-btn {
   padding: 10px 0;
   border: 1px solid #e2e8f0;
-  background: white;
+  background: white !important;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
@@ -249,13 +249,21 @@ input.number-box:disabled {
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  transition: all 0.2s;
 }
 
-.adjust-btn.plus { color: #ef4444; }
-.adjust-btn.minus { color: #3b82f6; }
+.adjust-btn.plus { 
+  color: #ef4444; 
+}
+
+.adjust-btn.minus { 
+  color: #3b82f6; 
+}
 
 .adjust-btn:hover {
-  background: #f8fafc;
+  background: #f8fafc !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .main-controls {

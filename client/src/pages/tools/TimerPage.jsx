@@ -238,7 +238,6 @@ function TimerPage() {
             </div>
 
             <div className="main-controls">
-              <button className="main-btn btn-secondary" onClick={() => adjustTime('set', 'min', 0)}>다시 선택</button>
               <button 
                 className={`main-btn ${isRunning ? 'btn-pause' : 'btn-start'}`}
                 onClick={toggleTimer}
