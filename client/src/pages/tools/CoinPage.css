@@ -79,7 +79,7 @@
   width: 100%;
   max-width: 280px;
   padding: 16px 32px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
   color: white;
   border-radius: 30px;
   font-size: 18px;
@@ -87,13 +87,13 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 15px rgba(56, 142, 60, 0.3);
   display: block;
 }
 
 .coin-flip-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 20px rgba(56, 142, 60, 0.4);
 }
 
 .coin-flip-btn:active:not(:disabled) {
