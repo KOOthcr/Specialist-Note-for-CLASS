@@ -392,6 +392,30 @@ function ProgressCheckPage() {
     let newData = [...tableData];
     newData[idx][field] = value;
 
+    // [1] 오늘 수업 여부 토글 시 오프셋 자동 조정 (차시 자동 증감)
+    if (field === 'isTodayLesson') {
+      const row = newData[idx];
+      const currentOffset = offsets[row.classNum] || 0;
+      // 수업 없음(false)으로 바뀌면 차시 -1, 오늘 수업(true)으로 바뀌면 차시 +1
+      const newOffset = value === false ? currentOffset - 1 : currentOffset + 1;
+      const newOffsets = { ...offsets, [row.classNum]: newOffset };
+      setOffsets(newOffsets);
+      
+      // 도미노 효과 적용
+      newData = newData.map(r => {
+        if (r.classNum === row.classNum) {
+          const calcP = r.baseCalcPeriod + newOffset;
+          return { 
+            ...r, 
+            lesson_count: String(calcP),
+            activity: allSemesterTopics[calcP - 1] || r.activity 
+          };
+        }
+        return r;
+      });
+    }
+
+    // [2] 차시 수동 수정 시 오프셋 계산 및 도미노 효과
     if (field === 'lesson_count') {
       const row = newData[idx];
       const newLessonNum = Number(value);
@@ -400,7 +424,6 @@ function ProgressCheckPage() {
         const newOffsets = { ...offsets, [row.classNum]: offset };
         setOffsets(newOffsets);
         
-        // 도미노 효과: 같은 반의 모든 행 차시 및 활동내용 연동 업데이트
         newData = newData.map(r => {
           if (r.classNum === row.classNum) {
             const calcP = r.baseCalcPeriod + offset;
