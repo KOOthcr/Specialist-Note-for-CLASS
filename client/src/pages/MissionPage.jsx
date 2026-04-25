@@ -1,87 +1,125 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './MissionPage.css';
 import MissionSettingModal from '../components/mission/MissionSettingModal';
 import MissionProgressBar from '../components/mission/MissionProgressBar';
 import { useModal } from '../components/common/GlobalModal';
+import { useAllStudents } from '../hooks/useAllStudents';
+import { db } from '../firebase/config';
+import { doc, onSnapshot, setDoc, deleteDoc, updateDoc, increment } from 'firebase/firestore';
 
 function MissionPage() {
   const { showConfirm, showAlert } = useModal();
-  const [selectedClass, setSelectedClass] = useState('5-1');
+  const { students, currentUser } = useAllStudents();
+  
+  const [selectedClass, setSelectedClass] = useState('');
+  const [currentMission, setCurrentMission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   
-  // 더미 데이터 상태 관리
-  // 실제 환경에서는 백엔드/Firebase와 연동해야 합니다.
-  const [missions, setMissions] = useState({
-    '5-1': {
-      missionName: '바른 자세로 수업 듣기',
-      reward: '자유 체육 1시간',
-      targetScore: 50,
-      currentScore: 24,
-      createdAt: new Date().toISOString()
-    },
-    '5-2': null,
-    '5-3': {
-      missionName: '준비물 잘 챙겨오기',
-      reward: '영화 감상',
-      targetScore: 100,
-      currentScore: 100,
-      createdAt: new Date().toISOString()
-    }
-  });
+  // 1. 학생 데이터에서 학급 목록 추출
+  const availableClasses = useMemo(() => {
+    if (!students || students.length === 0) return [];
+    
+    const classSet = new Set();
+    students.forEach(s => {
+      if (s.grade && s.class_number) {
+        classSet.add(`${s.grade}-${s.class_number}`);
+      }
+    });
 
-  const currentMission = missions[selectedClass];
+    return Array.from(classSet).sort((a, b) => {
+      const [ga, ca] = a.split('-').map(Number);
+      const [gb, cb] = b.split('-').map(Number);
+      return ga !== gb ? ga - gb : ca - cb;
+    });
+  }, [students]);
 
-  // 반 변경 시 축하 효과 초기화
+  // 2. 초기 학급 선택 및 변경 대응
   useEffect(() => {
-    setShowConfetti(false);
-    if (currentMission && currentMission.currentScore >= currentMission.targetScore) {
-      setShowConfetti(true);
+    if (availableClasses.length > 0 && !selectedClass) {
+      setSelectedClass(availableClasses[0]);
     }
-  }, [selectedClass, currentMission?.currentScore]);
+  }, [availableClasses, selectedClass]);
+
+  // 3. Firebase 미션 데이터 실시간 감시
+  useEffect(() => {
+    if (!currentUser || !selectedClass) return;
+
+    const missionRef = doc(db, 'users', currentUser.uid, 'missions', selectedClass);
+    const unsubscribe = onSnapshot(missionRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setCurrentMission(data);
+        
+        // 달성 시 효과
+        if (data.currentScore >= data.targetScore) {
+          setShowConfetti(true);
+        } else {
+          setShowConfetti(false);
+        }
+      } else {
+        setCurrentMission(null);
+        setShowConfetti(false);
+      }
+    }, (error) => {
+      console.error("Mission fetch error:", error);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser, selectedClass]);
 
   const handleClassChange = (e) => {
     setSelectedClass(e.target.value);
   };
 
-  const handleSaveMission = (newMission) => {
-    setMissions(prev => ({
-      ...prev,
-      [selectedClass]: newMission
-    }));
-    setIsModalOpen(false);
-    setShowConfetti(false);
-    showAlert('새로운 단체 미션이 시작되었습니다!', '미션 등록');
+  const handleSaveMission = async (newMission) => {
+    if (!currentUser || !selectedClass) return;
+
+    try {
+      const missionRef = doc(db, 'users', currentUser.uid, 'missions', selectedClass);
+      await setDoc(missionRef, {
+        ...newMission,
+        classId: selectedClass,
+        updatedAt: new Date().toISOString()
+      });
+      setIsModalOpen(false);
+      showAlert(`${selectedClass.split('-')[0]}학년 ${selectedClass.split('-')[1]}반의 새로운 미션이 시작되었습니다!`, '미션 등록');
+    } catch (error) {
+      console.error("Save mission error:", error);
+      showAlert('미션 저장 중 오류가 발생했습니다.', '오류', 'error');
+    }
   };
 
-  const handleUpdateScore = (amount) => {
-    if (!currentMission) return;
+  const handleUpdateScore = async (amount) => {
+    if (!currentMission || !currentUser || !selectedClass) return;
     
-    // 이미 달성한 경우 점수 올리지 않기 (내리는 것은 허용할 수도 있지만 여기서는 일단 방어)
+    // 이미 달성한 경우 추가 점수 제한 (감점은 허용)
     if (amount > 0 && currentMission.currentScore >= currentMission.targetScore) {
-       // 이미 달성함
        return;
     }
 
-    setMissions(prev => {
-      const updatedScore = Math.max(0, prev[selectedClass].currentScore + amount);
-      return {
-        ...prev,
-        [selectedClass]: {
-          ...prev[selectedClass],
-          currentScore: updatedScore
-        }
-      };
-    });
+    try {
+      const missionRef = doc(db, 'users', currentUser.uid, 'missions', selectedClass);
+      await updateDoc(missionRef, {
+        currentScore: increment(amount),
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Update score error:", error);
+    }
   };
 
   const handleClearMission = () => {
-    showConfirm('현재 진행 중인 미션을 삭제하시겠습니까? (점수가 모두 초기화됩니다)', () => {
-      setMissions(prev => ({
-        ...prev,
-        [selectedClass]: null
-      }));
-      setShowConfetti(false);
+    if (!currentUser || !selectedClass) return;
+
+    showConfirm('현재 진행 중인 미션을 종료하고 삭제하시겠습니까? (점수가 모두 초기화됩니다)', async () => {
+      try {
+        const missionRef = doc(db, 'users', currentUser.uid, 'missions', selectedClass);
+        await deleteDoc(missionRef);
+        showAlert('미션이 종료되었습니다.', '알림');
+      } catch (error) {
+        console.error("Delete mission error:", error);
+      }
     }, '미션 삭제');
   };
 
@@ -96,9 +134,14 @@ function MissionPage() {
         <div className="class-selector">
           <label>학급 선택:</label>
           <select value={selectedClass} onChange={handleClassChange} className="class-select-dropdown">
-            <option value="5-1">5학년 1반</option>
-            <option value="5-2">5학년 2반</option>
-            <option value="5-3">5학년 3반</option>
+            {availableClasses.length > 0 ? (
+              availableClasses.map(c => {
+                const [g, n] = c.split('-');
+                return <option key={c} value={c}>{g}학년 {n}반</option>;
+              })
+            ) : (
+              <option value="">학급 정보 없음</option>
+            )}
           </select>
         </div>
       </div>
@@ -107,9 +150,9 @@ function MissionPage() {
         {!currentMission ? (
           <div className="empty-mission-state">
             <div className="empty-icon">🌱</div>
-            <h3>아직 진행 중인 미션이 없어요.</h3>
+            <h3>{selectedClass ? `${selectedClass.split('-')[0]}학년 ${selectedClass.split('-')[1]}반은 ` : ''}아직 진행 중인 미션이 없어요.</h3>
             <p>우리 반만의 특별한 목표와 보상을 정해보세요!</p>
-            <button className="start-mission-btn" onClick={() => setIsModalOpen(true)}>
+            <button className="start-mission-btn" onClick={() => setIsModalOpen(true)} disabled={!selectedClass}>
               + 새 미션 만들기
             </button>
           </div>
@@ -132,7 +175,7 @@ function MissionPage() {
             </div>
 
             <div className="mission-body">
-              {/* 왼쪽: 온도계 프로그레스 — MissionProgressBar 컴포넌트로 분리 */}
+              {/* 왼쪽: 온도계 프로그레스 */}
               <div className="progress-section">
                 <MissionProgressBar currentMission={currentMission} />
               </div>
