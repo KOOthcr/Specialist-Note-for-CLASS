@@ -1,10 +1,11 @@
 .noise-card {
   background: white;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 500px;
+  max-width: 800px; /* 가로형을 위해 너비 확장 */
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,51 +30,57 @@
 
 .meter-container {
   position: relative;
-  width: 80px;
-  height: 300px;
-  margin: 0 auto 30px;
+  width: 100%; /* 전체 너비 사용 */
+  height: 80px; /* 높이 고정 */
+  margin: 20px 0 60px 0;
+  padding: 0 10px;
 }
 
 .meter-bg {
   width: 100%;
   height: 100%;
-  background-color: var(--bg-light);
-  border-radius: 40px;
+  background-color: #f1f5f9;
+  border-radius: 12px;
   overflow: hidden;
   position: relative;
   border: 2px solid #e2e8f0;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .meter-fill {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
-  width: 100%;
-  border-radius: 40px;
-  transition: height 0.1s ease, background-color 0.3s ease;
+  height: 100%; /* 세로 꽉 채움 */
+  width: 0; /* 가로로 늘어남 */
+  transition: width 0.1s ease, background-color 0.3s ease;
+  border-radius: 8px;
 }
 
 .threshold-line {
   position: absolute;
-  left: -30px;
-  right: -30px;
-  height: 0;
-  border-top: 3px dashed var(--color-danger);
+  top: -10px;
+  bottom: -10px;
+  width: 0;
+  border-left: 3px dashed var(--color-danger);
   z-index: 10;
-  transition: bottom 0.3s ease;
+  transition: left 0.3s ease;
 }
 
 .threshold-label {
   position: absolute;
-  right: -80px;
-  top: -10px;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
   font-size: 14px;
   color: var(--color-danger);
   font-weight: 800;
   background: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border: 1px solid #fee2e2;
 }
 
 .volume-text {
@@ -92,8 +99,8 @@
 
 .threshold-presets {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr); /* 3열 가로 배치 */
+  gap: 12px;
   margin-bottom: 10px;
 }
 

@@ -110,13 +110,13 @@ function NoiseMeterPage() {
             <div 
               className="meter-fill" 
               style={{ 
-                height: `${volume}%`, 
+                width: `${volume}%`, 
                 backgroundColor: getStatusColor() 
               }}
             ></div>
           </div>
           
-          <div className="threshold-line" style={{ bottom: `${threshold}%` }}>
+          <div className="threshold-line" style={{ left: `${threshold}%` }}>
             <span className="threshold-label">경고 기준</span>
           </div>
         </div>
