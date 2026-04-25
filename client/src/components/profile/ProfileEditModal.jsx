@@ -163,7 +163,7 @@ function ProfileEditModal({ isOpen, onClose, onUpdate }) {
               className="auth-input" 
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
-              placeholder="예) 체육관, 영어1실"
+              placeholder="예) 열정, 행복, 체육관"
               style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', marginTop: '4px' }}
             />
             <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '4px' }}>

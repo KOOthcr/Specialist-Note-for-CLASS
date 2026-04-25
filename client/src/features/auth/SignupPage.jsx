@@ -205,7 +205,7 @@ function SignupPage() {
               id="roomName"
               type="text" 
               className="auth-input" 
-              placeholder="예) 체육관, 영어1실"
+              placeholder="예) 열정, 행복, 체육관"
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
             />
