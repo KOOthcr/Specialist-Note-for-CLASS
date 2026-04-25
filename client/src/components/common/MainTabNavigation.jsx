@@ -63,6 +63,7 @@ function MainTabNavigation({ location, getTabTitle }) {
             <a href="/main/tools/dust" className={`tab-item ${path === '/main/tools/dust' ? 'active-tab' : ''}`}>☁️ 미세먼지</a>
             <a href="/main/tools/scoreboard" className={`tab-item ${path === '/main/tools/scoreboard' ? 'active-tab' : ''}`}>📊 점수판</a>
             <a href="/main/tools/whiteboard" className={`tab-item ${path === '/main/tools/whiteboard' ? 'active-tab' : ''}`}>🖍️ 판서</a>
+            <a href="/main/tools/metronome" className={`tab-item ${path === '/main/tools/metronome' ? 'active-tab' : ''}`}>🎵 메트로놈</a>
           </>
         ) : (
           <span className="tab-item active-tab">{getTabTitle()}</span>

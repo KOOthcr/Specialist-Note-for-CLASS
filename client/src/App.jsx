@@ -20,6 +20,7 @@ import NoiseMeterPage from './pages/tools/NoiseMeterPage';
 import DustPage from './pages/tools/DustPage';
 import ScoreboardPage from './pages/tools/ScoreboardPage';
 import WhiteboardPage from './pages/tools/WhiteboardPage';
+import MetronomePage from './pages/tools/MetronomePage';
 import MissionPage from './pages/MissionPage';
 import StudentPage from './pages/StudentPage';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -61,6 +62,7 @@ function App() {
         <Route path="tools/dust" element={<DustPage />} />
         <Route path="tools/scoreboard" element={<ScoreboardPage />} />
         <Route path="tools/whiteboard" element={<WhiteboardPage />} />
+        <Route path="tools/metronome" element={<MetronomePage />} />
         
         <Route path="mission" element={<MissionPage />} />
       </Route>
