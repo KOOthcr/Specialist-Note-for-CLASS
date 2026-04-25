@@ -11,7 +11,7 @@ import './ProgressCheckPage.css';
 
 
 function ProgressCheckPage() {
-  const { showAlert } = useModal();
+  const { showAlert, showConfirm } = useModal();
   const [currentUser, setCurrentUser] = useState(null);
   const [groups, setGroups] = useState([]); 
   const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -443,6 +443,37 @@ function ProgressCheckPage() {
     setTableData(newData);
   };
 
+  // --- 데이터 초기화 기능 추가 ---
+  const handleResetToDefault = () => {
+    if (!currentUser || !selectedGroupId) return;
+    
+    showConfirm('현재 반의 모든 진도 오프셋과 오늘의 기록을 삭제하고 초기화하시겠습니까?\n(진도 차시가 계획표 기준으로 복구됩니다.)', async () => {
+      setIsLoading(true);
+      try {
+        const uid = currentUser.uid;
+        // 1. 오프셋 초기화 (해당 그룹 전체)
+        await setDoc(doc(db, 'users', uid, 'offsets', selectedGroupId), {});
+        setOffsets({});
+
+        // 2. 오늘 기록 삭제 (records만 빈 객체로 업데이트)
+        const docId = `${currentDate}_${selectedGroupId}`;
+        await setDoc(doc(db, 'users', uid, 'progress_check', docId), { 
+          records: {},
+          updatedAt: new Date().toISOString() 
+        }, { merge: false });
+
+        // 3. 다시 불러오기
+        await fetchProgressData();
+        showAlert('데이터가 기본값으로 초기화되었습니다.', '초기화 완료');
+      } catch (e) {
+        console.error('Reset error:', e);
+        showAlert('초기화 중 오류가 발생했습니다.', '오류');
+      } finally {
+        setIsLoading(false);
+      }
+    }, '기본값으로 초기화');
+  };
+
   // --- 핵심 개선: 방문하지 않은 날짜까지 포함하여 엑셀 생성 ---
   const handleExportExcel = async () => {
     if (!currentUser || !selectedGroupId) return;
@@ -566,6 +597,7 @@ function ProgressCheckPage() {
       </div>
       <div className="check-header-premium no-print">
         <div className="header-left-area" style={{ display: 'flex', gap: '10px' }}>
+          <button className="btn-outline-red" onClick={handleResetToDefault}>🔄 기본값으로 초기화</button>
           <button className="btn-save-premium" onClick={handleSave} style={{ background: '#2e7d32', color: 'white', fontWeight: 'bold', padding: '10px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>💾 저장하기</button>
           <button className="btn-outline-green" onClick={handleExportExcel} style={{ border: '1px solid #2e7d32', color: '#2e7d32' }}>📊 학기 활동 내용 다운로드</button>
         </div>

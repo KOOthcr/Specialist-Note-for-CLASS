@@ -333,6 +333,25 @@
   margin-bottom: -1px;
 }
 
+.btn-outline-red {
+  background: white;
+  border: 1px solid #d32f2f;
+  color: #d32f2f;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-outline-red:hover {
+  background-color: #fdeaea;
+  transform: translateY(-1px);
+}
+
 @media print {
   .no-print { display: none !important; }
   .progress-check-container { padding: 0; }
