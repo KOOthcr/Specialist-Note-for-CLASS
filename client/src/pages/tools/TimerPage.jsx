@@ -35,6 +35,50 @@ function TimerPage() {
     }
   }, [minutes, seconds, isRunning]);
 
+  // 오디오 컨텍스트 생성 (효과음용)
+  const playSound = (freq, type, duration) => {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioContext();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = type; // 'sine', 'square', 'sawtooth', 'triangle'
+      oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + duration);
+    } catch (e) {
+      console.error('Audio play error:', e);
+    }
+  };
+
+  const playTickSound = () => playSound(800, 'sine', 0.1);
+  const playWarningSound = () => {
+    playSound(600, 'square', 0.2);
+    setTimeout(() => playSound(600, 'square', 0.2), 300);
+  };
+  const playEndSound = () => {
+    const endCtx = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 784, 698].forEach((f, i) => {
+      setTimeout(() => {
+        const osc = endCtx.createOscillator();
+        const gain = endCtx.createGain();
+        osc.frequency.value = f;
+        gain.gain.value = 0.1;
+        osc.connect(gain);
+        gain.connect(endCtx.destination);
+        osc.start();
+        osc.stop(endCtx.currentTime + 0.5);
+      }, i * 300);
+    });
+  };
+
   // 타이머 핵심 로직
   useEffect(() => {
     if (isRunning && timeLeft > 0) {
@@ -42,12 +86,11 @@ function TimerPage() {
         setTimeLeft((prev) => {
           const next = prev - 1;
           
-          // 효과음 로직 (파일이 있을 경우 동작)
           if (settings.clockSound && next > 0) {
-            // playTickSound(); 
+            playTickSound(); 
           }
           if (settings.warningSound && next === 10) {
-            // playWarningSound();
+            playWarningSound();
           }
           
           return next;
@@ -57,7 +100,7 @@ function TimerPage() {
       setIsRunning(false);
       clearInterval(intervalRef.current);
       if (settings.endSound) {
-        // playEndSound();
+        playEndSound();
       }
       showAlert('시간이 종료되었습니다! 🔔', '알림');
     }
