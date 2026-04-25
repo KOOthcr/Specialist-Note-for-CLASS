@@ -96,42 +96,22 @@ function DashboardLayout() {
 
         {/* 학급 선택 영역 */}
         {/* 사이드바 프로필 영역 */}
-        <div className="sidebar-header profile-section">
-          <div style={{ position: 'relative', width: '100%', textAlign: 'center' }}>
+        <div className="sidebar-profile-area">
+          <div className="teacher-profile-card">
             <div className="profile-subtitle">{teacherName} 선생님의</div>
             <div className="profile-title">{roomName} 전담교실</div>
             <button 
               className="profile-edit-btn" 
               onClick={() => setIsProfileEditOpen(true)}
               title="정보 수정"
-              style={{
-                position: 'absolute',
-                top: '50%',
-                right: '-10px',
-                transform: 'translateY(-50%)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '18px',
-                opacity: 0.6,
-                padding: '4px'
-              }}
             >
               ⚙️
             </button>
           </div>
 
-          <div style={{
-            marginTop: '20px',
-            backgroundColor: '#e6f4ea',
-            padding: '12px',
-            borderRadius: '8px',
-            border: '2px dashed var(--color-primary)',
-            textAlign: 'center',
-            width: '100%'
-          }}>
-            <div style={{ fontSize: '13px', color: 'var(--color-primary-dark)', marginBottom: '4px', fontWeight: 'bold' }}>입장 코드 (PIN)</div>
-            <div style={{ fontSize: '24px', color: 'var(--color-primary)', letterSpacing: '4px', fontWeight: 'bold' }}>{sessionCode}</div>
+          <div className="pin-code-card">
+            <div className="pin-label">입장 코드 (PIN)</div>
+            <div className="pin-number">{sessionCode}</div>
           </div>
         </div>
 

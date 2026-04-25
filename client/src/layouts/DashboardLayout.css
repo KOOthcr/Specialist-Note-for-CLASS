@@ -59,32 +59,83 @@
   opacity: 0.6;
 }
 
-.sidebar-header {
-  padding: 24px 20px;
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-}
-
-.profile-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 32px 20px;
-  gap: 8px;
-}
-
 .profile-subtitle {
-  font-size: 14px;
-  color: var(--color-text-main);
+  font-size: 13px;
+  color: #64748b;
   font-weight: 500;
+  margin-bottom: 4px;
 }
 
 .profile-title {
+  font-size: 17px;
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  word-break: keep-all;
+}
+
+.sidebar-profile-area {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.teacher-profile-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.02);
+  transition: all 0.2s ease;
+}
+
+.teacher-profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.profile-edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
   font-size: 16px;
-  color: var(--color-text-main);
-  font-weight: 700;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+
+.profile-edit-btn:hover {
+  opacity: 1;
+}
+
+.pin-code-card {
+  background-color: #f0fdf4;
+  padding: 14px;
+  border-radius: 16px;
+  border: 2px dashed #86efac;
+  text-align: center;
+  width: 100%;
+}
+
+.pin-label {
+  font-size: 12px;
+  color: #166534;
+  margin-bottom: 6px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.pin-number {
+  font-size: 26px;
+  color: var(--color-primary);
+  letter-spacing: 4px;
+  font-weight: 900;
+  font-family: 'Inter', sans-serif;
 }
 
 .sidebar-nav {
