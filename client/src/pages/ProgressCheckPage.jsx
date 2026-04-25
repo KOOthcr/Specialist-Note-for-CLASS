@@ -221,16 +221,24 @@ function ProgressCheckPage() {
       const group = groups.find(g => g.id === selectedGroupId);
       if (!group) return;
 
-      const savedTimetable = localStorage.getItem('master_timetable');
-      const timetable = savedTimetable ? JSON.parse(savedTimetable) : [];
+      const groupOffsets = offsetDoc.exists() ? offsetDoc.data() : {};
+      setOffsets(groupOffsets);
+
+      // 시간표 데이터를 Firestore에서 가져옴
+      const timetableRef = doc(db, 'users', uid, 'settings', 'timetable');
+      const timetableSnap = await getDoc(timetableRef);
+      let timetable = [];
+      if (timetableSnap.exists()) {
+        timetable = timetableSnap.data().data || [];
+      } else {
+        const savedTimetable = localStorage.getItem('master_timetable');
+        timetable = savedTimetable ? JSON.parse(savedTimetable) : [];
+      }
+
       const [y, m, d] = currentDate.split('-').map(Number);
       const dObj = new Date(y, m - 1, d);
       const dayIdx = dObj.getDay() - 1;
       const isWeekday = dayIdx >= 0 && dayIdx <= 4;
-
-      const offsetDoc = await getDoc(doc(db, 'users', uid, 'offsets', selectedGroupId));
-      const groupOffsets = offsetDoc.exists() ? offsetDoc.data() : {};
-      setOffsets(groupOffsets);
 
       const docId = `${currentDate}_${selectedGroupId}`;
       const snap = await getDoc(doc(db, 'users', uid, 'progress_check', docId));
