@@ -6,6 +6,7 @@ import { auth, db } from '../firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import ProfileEditModal from '../components/profile/ProfileEditModal';
+import MainTabNavigation from '../components/common/MainTabNavigation';
 
 function DashboardLayout() {
   const { showConfirm, showAlert } = useModal();
@@ -172,91 +173,8 @@ function DashboardLayout() {
       </aside>
 
       <div className="main-content">
-        {/* 상단 전역 탭 영역 */}
-        {location.pathname !== '/main' && location.pathname !== '/main/' && (
-          <header className="main-header">
-            <div className="tab-container">
-              {(location.pathname.startsWith('/main/all-students') || location.pathname.startsWith('/main/class-list')) ? (
-                <>
-                  <a
-                    href="/main/all-students"
-                    className={`tab-item ${location.pathname === '/main/all-students' ? 'active-tab' : ''}`}
-                  >
-                    전체 학생 명단 관리
-                  </a>
-                  <a
-                    href="/main/class-list"
-                    className={`tab-item ${location.pathname === '/main/class-list' ? 'active-tab' : ''}`}
-                  >
-                    반별 학생 명단 관리
-                  </a>
-                </>
-              ) : location.pathname.startsWith('/main/behavior') ? (
-                <>
-                  <a
-                    href="/main/behavior/attendance"
-                    className={`tab-item ${location.pathname === '/main/behavior/attendance' ? 'active-tab' : ''}`}
-                  >
-                    반별 인원 체크
-                  </a>
-                  <a
-                    href="/main/behavior/task"
-                    className={`tab-item ${location.pathname === '/main/behavior/task' ? 'active-tab' : ''}`}
-                  >
-                    성장 기록
-                  </a>
-                  <a
-                    href="/main/behavior/accumulated"
-                    className={`tab-item ${location.pathname === '/main/behavior/accumulated' ? 'active-tab' : ''}`}
-                  >
-                    누가기록
-                  </a>
-                  <a
-                    href="/main/behavior/qna"
-                    className={`tab-item ${location.pathname === '/main/behavior/qna' ? 'active-tab' : ''}`}
-                  >
-                    학생 질문
-                  </a>
-                </>
-              ) : location.pathname.startsWith('/main/progress') ? (
-                <>
-                  <a
-                    href="/main/progress/timetable"
-                    className={`tab-item ${location.pathname === '/main/progress/timetable' ? 'active-tab' : ''}`}
-                    style={location.pathname === '/main/progress/timetable' ? { color: '#4f46e5', borderBottomColor: '#4f46e5' } : {}}
-                  >
-                    📅 기초시간표 작성
-                  </a>
-                  <a
-                    href="/main/progress/record"
-                    className={`tab-item ${location.pathname === '/main/progress/record' ? 'active-tab' : ''}`}
-                  >
-                    진도 기록
-                  </a>
-                  <a
-                    href="/main/progress/check"
-                    className={`tab-item ${location.pathname === '/main/progress/check' ? 'active-tab' : ''}`}
-                  >
-                    진도 확인
-                  </a>
-                </>
-              ) : location.pathname.startsWith('/main/tools') ? (
-                <>
-                  <a href="/main/tools/timer" className={`tab-item ${location.pathname === '/main/tools/timer' ? 'active-tab' : ''}`}>⏱️ 타이머</a>
-                  <a href="/main/tools/dice" className={`tab-item ${location.pathname === '/main/tools/dice' ? 'active-tab' : ''}`}>🎲 주사위</a>
-                  <a href="/main/tools/coin" className={`tab-item ${location.pathname === '/main/tools/coin' ? 'active-tab' : ''}`}>🪙 동전던지기</a>
-                  <a href="/main/tools/roulette" className={`tab-item ${location.pathname === '/main/tools/roulette' ? 'active-tab' : ''}`}>🎯 돌림판</a>
-                  <a href="/main/tools/noise" className={`tab-item ${location.pathname === '/main/tools/noise' ? 'active-tab' : ''}`}>🔔 소음측정기</a>
-                  <a href="/main/tools/dust" className={`tab-item ${location.pathname === '/main/tools/dust' ? 'active-tab' : ''}`}>☁️ 미세먼지</a>
-                  <a href="/main/tools/scoreboard" className={`tab-item ${location.pathname === '/main/tools/scoreboard' ? 'active-tab' : ''}`}>📊 점수판</a>
-                  <a href="/main/tools/whiteboard" className={`tab-item ${location.pathname === '/main/tools/whiteboard' ? 'active-tab' : ''}`}>🖍️ 판서</a>
-                </>
-              ) : (
-                <span className="tab-item active-tab">{getTabTitle()}</span>
-              )}
-            </div>
-          </header>
-        )}
+        {/* 상단 전역 탭 영역 — MainTabNavigation 컴포넌트로 분리 */}
+        <MainTabNavigation location={location} getTabTitle={getTabTitle} />
 
         {/* 실제 페이지(MainPage, 등)가 렌더링되는 영역 */}
         <div className="page-content">
