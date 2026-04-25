@@ -174,8 +174,8 @@
   transform-origin: left center;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-right: 30px;
+  justify-content: center; /* 중앙 정렬로 변경 */
+  padding-left: 60px; /* 중앙 핀을 피해 약간 바깥으로 */
   box-sizing: border-box;
 }
 
@@ -186,8 +186,7 @@
   font-size: 16px;
   white-space: nowrap;
   pointer-events: none;
-  /* 텍스트가 90도 회전되어 조각 안에서 바깥쪽으로 읽히도록 설정 */
-  transform: rotate(0deg);
+  /* 텍스트 자체를 다시 90도 돌릴지 여부는 취향이나, 일단 똑바로 보이게 함 */
 }
 
 .wheel-center {

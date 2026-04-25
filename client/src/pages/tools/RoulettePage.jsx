@@ -59,18 +59,20 @@ function RoulettePage() {
       // 결과 인덱스 계산
       // 회전이 끝난 후, CSS 각도(0도는 12시 방향에서 시작한다고 가정할 때, transform: rotate 기준)
       // 항목의 각도 크기
+      // 항목의 각도 크기
       const sliceAngle = 360 / items.length;
       
-      // 최종 각도를 360으로 나눈 나머지
+      // 최종 각도를 360으로 나눈 나머지 (시계 방향 회전)
+      // CSS rotate(deg)에서 0도는 3시 방향이므로, 12시 방향(포인터 위치)은 -90도 또는 270도 지점임.
+      // 하지만 conic-gradient는 12시(0도)부터 시작함.
       const normalizedRotation = newRotation % 360;
       
-      // 12시 방향을 가리키는 지시선(0도)을 기준으로, 
-      // 룰렛이 시계방향으로 회전했으므로, 12시에 위치한 항목의 인덱스를 계산해야 함.
-      // 인덱스 0번 항목의 중심은 (sliceAngle / 2) 각도에 위치함.
-      const winningIndex = Math.floor((360 - normalizedRotation) / sliceAngle) % items.length;
+      // 포인터(12시 방향)에 위치한 항목 계산
+      // 회전된 각도만큼 반대 방향으로 이동하여 0도(12시) 위치의 인덱스를 찾음
+      const winningIndex = Math.floor((360 - normalizedRotation) % 360 / sliceAngle) % items.length;
       
       setResult(items[winningIndex]);
-    }, 3000); // CSS 트랜지션 시간과 일치시킴
+    }, 3000);
   };
 
   // 룰렛 배경 스타일 (conic-gradient)
@@ -148,7 +150,9 @@ function RoulettePage() {
             >
               {items.map((item, idx) => {
                 const sliceAngle = 360 / items.length;
-                const textAngle = (sliceAngle * idx) + (sliceAngle / 2);
+                // conic-gradient가 12시(0도)부터 시작하므로, 
+                // 텍스트 위치도 12시 기준(각도 - 90도)으로 배치하여 중앙에 오도록 함
+                const textAngle = (sliceAngle * idx) + (sliceAngle / 2) - 90;
                 return (
                   <div 
                     key={idx} 
