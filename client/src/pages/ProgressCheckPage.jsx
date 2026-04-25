@@ -32,6 +32,8 @@ function ProgressCheckPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  const [allSemesterTopics, setAllSemesterTopics] = useState([]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -59,23 +61,16 @@ function ProgressCheckPage() {
       setGroups(allGroups);
       if (allGroups.length > 0) setSelectedGroupId(allGroups[0].id);
 
-      // 1. 최신 데이터(v2) 시도
       let planRef = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v2');
       let planSnap = await getDoc(planRef);
-      
-      // 2. 최신 데이터가 없으면 구버전(annual_plans) 시도
       if (!planSnap.exists()) {
         const oldRef = doc(db, 'users', uid, 'curriculum', 'annual_plans');
         const oldSnap = await getDoc(oldRef);
-        if (oldSnap.exists()) {
-          planSnap = oldSnap;
-          console.log("Old curriculum data (v1) found for Progress Check.");
-        }
+        if (oldSnap.exists()) planSnap = oldSnap;
       }
 
       if (planSnap && planSnap.exists()) {
         const data = planSnap.data();
-        // 구조에 따른 유연한 데이터 매핑
         if (data.semester1 || data.semester2) {
           setSemester1Plans(data.semester1 || []);
           setSemester2Plans(data.semester2 || []);
@@ -189,12 +184,13 @@ function ProgressCheckPage() {
     setCurrentDate(`${ny}-${nm}-${nd}`);
   };
 
-  const autoSaveToFirebase = useCallback(async (data) => {
+  const handleSave = async () => {
     if (!currentUser || !selectedGroupId) return;
+    setIsLoading(true);
     const group = groups.find(g => g.id === selectedGroupId);
     try {
       const recordsObj = {};
-      data.forEach(row => {
+      tableData.forEach(row => {
         const key = group.type === 'grade' 
           ? (row.periodIdx !== null ? `${row.classNum}_p${row.periodIdx}` : `${row.classNum}_off`)
           : (row.periodIdx !== null ? `club_p${row.periodIdx}` : 'club_off');
@@ -205,11 +201,17 @@ function ProgressCheckPage() {
           timestamp: new Date().toISOString()
         };
       });
-      await setDoc(doc(db, 'users', currentUser.uid, 'progress_check', `${currentDate}_${selectedGroupId}`), {
-        records: recordsObj, updatedAt: new Date().toISOString()
-      }, { merge: true });
-    } catch (e) { console.error('Auto-save error:', e); }
-  }, [currentUser, selectedGroupId, currentDate, groups]);
+      // 데이터 및 오프셋 저장
+      await Promise.all([
+        setDoc(doc(db, 'users', currentUser.uid, 'progress_check', `${currentDate}_${selectedGroupId}`), {
+          records: recordsObj, updatedAt: new Date().toISOString()
+        }, { merge: true }),
+        setDoc(doc(db, 'users', currentUser.uid, 'offsets', selectedGroupId), offsets)
+      ]);
+      showAlert('성공적으로 저장되었습니다.', '성공');
+    } catch (e) { console.error('Save error:', e); showAlert('저장 중 오류가 발생했습니다.', '오류'); }
+    finally { setIsLoading(false); }
+  };
 
   useEffect(() => {
     if (currentUser && selectedGroupId) fetchProgressData();
@@ -288,28 +290,22 @@ function ProgressCheckPage() {
         }
       }
 
-      // [3] 활동 내용(Topics) 목록 생성
-      const allSemesterTopics = [];
+      const topics = [];
       sortedPlans.forEach(plan => {
         const gradesData = plan.grades || {};
         const k = Object.keys(gradesData).find(key => 
-          String(key) === String(group.val) || 
-          String(key) === String(group.id) || 
-          String(key) === group.name.replace('⭐ ', '') ||
-          String(key) === group.name.replace('학년', '')
+          String(key) === String(group.val) || String(key) === String(group.id) || String(key) === group.name.replace('⭐ ', '') || String(key) === group.name.replace('학년', '')
         );
         const gData = gradesData[k];
         if (gData && gData.topics) {
           const weeklyH = Number(gData.weeklyH || 0);
-          for (let i = 0; i < weeklyH; i++) {
-            allSemesterTopics.push(gData.topics[i] || '');
-          }
+          for (let i = 0; i < weeklyH; i++) topics.push(gData.topics[i] || '');
         }
       });
+      setAllSemesterTopics(topics);
 
       let classesToShow = [];
       if (group.type === 'grade') {
-        // 쿼리 대신 전체를 가져와서 필터링 (타입 이슈 방지)
         const allClassSnap = await getDocs(collection(db, 'users', uid, 'classes'));
         classesToShow = allClassSnap.docs
           .map(d => ({ id: d.id, classNum: d.data().class_number, grade: d.data().grade, leader: d.data().leader || '' }))
@@ -325,9 +321,7 @@ function ProgressCheckPage() {
         const periodsToday = [];
         if (isWeekday && Array.isArray(timetable)) {
           for (let p = 0; p < timetable.length; p++) {
-            if (Array.isArray(timetable[p]) && String(timetable[p][dayIdx]) === String(cls.id)) {
-              periodsToday.push(p);
-            }
+            if (Array.isArray(timetable[p]) && String(timetable[p][dayIdx]) === String(cls.id)) periodsToday.push(p);
           }
         }
 
@@ -342,15 +336,14 @@ function ProgressCheckPage() {
             }
             const rowKey = group.type === 'grade' ? `${cls.classNum}_p${pIdx}` : `club_p${pIdx}`;
             const finalPeriod = baseLessonNum + lessonsBeforeThis + (groupOffsets[cls.classNum] || 0);
-            const autoActivity = allSemesterTopics[finalPeriod - 1] || '';
+            const autoActivity = topics[finalPeriod - 1] || '';
 
             if (savedRecords && savedRecords[rowKey]) {
               const saved = savedRecords[rowKey];
-              const isInvalidP = !saved.lesson_count || saved.period === saved.lesson_count || !isNaN(saved.period);
               finalData.push({
                 ...saved, classNum: cls.classNum, periodIdx: pIdx, baseCalcPeriod: baseLessonNum + lessonsBeforeThis,
-                period: isInvalidP ? `${pIdx}교시` : saved.period,
-                lesson_count: saved.lesson_count || saved.period || String(finalPeriod),
+                period: (!saved.lesson_count || isNaN(saved.period)) ? `${pIdx}교시` : saved.period,
+                lesson_count: saved.lesson_count || String(finalPeriod),
                 isTodayLesson: saved.isTodayLesson !== undefined ? saved.isTodayLesson : true
               });
             } else {
@@ -364,9 +357,7 @@ function ProgressCheckPage() {
         } else {
           const rowKey = group.type === 'grade' ? `${cls.classNum}_off` : 'club_off';
           let lessonsInWeek = 0;
-          // 일요일(-1)이나 토요일(5)이면 금요일(4)까지 모든 수업 합산
           const checkUntil = (dayIdx < 0 || dayIdx > 4) ? 5 : dayIdx;
-          
           if (timetable.length > 0) {
             for (let d = 0; d < checkUntil; d++) {
               for (let p = 0; p < timetable.length; p++) {
@@ -375,15 +366,13 @@ function ProgressCheckPage() {
             }
           }
           const finalPeriod = baseLessonNum + lessonsInWeek + (groupOffsets[cls.classNum] || 0);
-          const autoActivity = allSemesterTopics[finalPeriod - 1] || '';
+          const autoActivity = topics[finalPeriod - 1] || '';
 
           if (savedRecords && savedRecords[rowKey]) {
             const saved = savedRecords[rowKey];
-            const isInvalidP = !saved.lesson_count || saved.period === saved.lesson_count || !isNaN(saved.period);
             finalData.push({
               ...saved, classNum: cls.classNum, periodIdx: null, baseCalcPeriod: baseLessonNum + lessonsInWeek,
-              period: isInvalidP ? '-' : saved.period,
-              lesson_count: saved.lesson_count || saved.period || String(finalPeriod),
+              period: '-', lesson_count: saved.lesson_count || String(finalPeriod),
               isTodayLesson: saved.isTodayLesson !== undefined ? saved.isTodayLesson : false
             });
           } else {
@@ -396,15 +385,13 @@ function ProgressCheckPage() {
         }
       });
       setTableData(finalData);
-      if (!snap.exists() && finalData.some(row => row.isTodayLesson)) {
-        autoSaveToFirebase(finalData);
-      }
     } catch (e) { console.error(e); } finally { setIsLoading(false); }
   };
 
-  const handleInputChange = async (idx, field, value) => {
-    const newData = [...tableData];
+  const handleInputChange = (idx, field, value) => {
+    let newData = [...tableData];
     newData[idx][field] = value;
+
     if (field === 'lesson_count') {
       const row = newData[idx];
       const newLessonNum = Number(value);
@@ -412,15 +399,22 @@ function ProgressCheckPage() {
         const offset = newLessonNum - row.baseCalcPeriod;
         const newOffsets = { ...offsets, [row.classNum]: offset };
         setOffsets(newOffsets);
-        try {
-          await setDoc(doc(db, 'users', currentUser.uid, 'offsets', selectedGroupId), newOffsets);
-          fetchProgressData();
-          return;
-        } catch (err) { console.error(err); }
+        
+        // 도미노 효과: 같은 반의 모든 행 차시 및 활동내용 연동 업데이트
+        newData = newData.map(r => {
+          if (r.classNum === row.classNum) {
+            const calcP = r.baseCalcPeriod + offset;
+            return { 
+              ...r, 
+              lesson_count: String(calcP),
+              activity: allSemesterTopics[calcP - 1] || r.activity 
+            };
+          }
+          return r;
+        });
       }
     }
     setTableData(newData);
-    autoSaveToFirebase(newData);
   };
 
   // --- 핵심 개선: 방문하지 않은 날짜까지 포함하여 엑셀 생성 ---
@@ -546,8 +540,8 @@ function ProgressCheckPage() {
       </div>
       <div className="check-header-premium no-print">
         <div className="header-left-area" style={{ display: 'flex', gap: '10px' }}>
+          <button className="btn-save-premium" onClick={handleSave} style={{ background: '#2e7d32', color: 'white', fontWeight: 'bold', padding: '10px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>💾 저장하기</button>
           <button className="btn-outline-green" onClick={handleExportExcel} style={{ border: '1px solid #2e7d32', color: '#2e7d32' }}>📊 학기 활동 내용 다운로드</button>
-          <span className="auto-save-badge">✨ 자동 저장 중</span>
         </div>
         <WeekNavigator week={weekInfo.week} period={weekInfo.period} onPrev={() => handleWeekChange(-1)} onNext={() => handleWeekChange(1)} />
         <SophisticatedDatePicker value={currentDate} onChange={setCurrentDate} />
