@@ -249,7 +249,7 @@
   width: 100%;
   max-width: 320px;
   padding: 16px 32px;
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
   color: white;
   border-radius: 30px;
   font-size: 18px;
@@ -257,14 +257,14 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
+  box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
   display: block;
   margin-top: 20px;
 }
 
 .spin-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+  box-shadow: 0 6px 20px rgba(27, 94, 32, 0.4);
 }
 
 .spin-btn:active:not(:disabled) {
