@@ -126,8 +126,32 @@ function NoiseMeterPage() {
         </div>
 
         <div className="controls-section">
+          <div className="threshold-presets">
+            <button 
+              className={`preset-btn ${threshold === 30 ? 'active' : ''}`}
+              onClick={() => setThreshold(30)}
+            >
+              🤫 아주 조용히 (30)
+            </button>
+            <button 
+              className={`preset-btn ${threshold === 60 ? 'active' : ''}`}
+              onClick={() => setThreshold(60)}
+            >
+              🗣️ 적당한 대화 (60)
+            </button>
+            <button 
+              className={`preset-btn ${threshold === 85 ? 'active' : ''}`}
+              onClick={() => setThreshold(85)}
+            >
+              🎈 활발한 활동 (85)
+            </button>
+          </div>
+
           <label className="threshold-slider">
-            경고 기준 설정 ({threshold})
+            <div className="slider-header">
+              <span>경고 기준 직접 설정</span>
+              <span className="threshold-value" style={{ color: getStatusColor() }}>{threshold}</span>
+            </div>
             <input 
               type="range" 
               min="10" 
@@ -139,11 +163,11 @@ function NoiseMeterPage() {
 
           {isListening ? (
             <button className="control-btn stop-btn" onClick={stopListening}>
-              측정 중지
+              ⏹️ 측정 중지
             </button>
           ) : (
             <button className="control-btn start-btn" onClick={startListening}>
-              측정 시작 (마이크 허용 필요)
+              ▶️ 측정 시작 (마이크 허용 필요)
             </button>
           )}
         </div>
