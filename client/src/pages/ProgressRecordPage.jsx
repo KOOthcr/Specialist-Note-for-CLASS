@@ -529,6 +529,7 @@ function ProgressRecordPage() {
         <div className="plan-header-row">
           <div className="col-week-header">주</div>
           <div className="col-period-header">기 간</div>
+          <div className="col-lesson-header">차시</div>
           <div className="col-topic-header">
             <div className="topic-title">{currentGroup?.name} {selectedSemester}학기 진도 계획</div>
             <div className="topic-subtitle">학습 주제 및 내용 (우측 X 버튼으로 개별 삭제 가능)</div>
@@ -572,16 +573,13 @@ function ProgressRecordPage() {
                 </div>
               </div>
               
-              <div className="col-topic-and-hours-container">
+              <div className="col-lesson-topic-container">
                 {Array.from({ length: Math.max(1, h) }).map((_, i) => (
-                  <div key={i} className="lesson-row-item-combined">
-                    <div className="col-hour-badge-box">
-                      <div className="hour-badge-inner">
-                        <span className="hour-num">{h > 0 ? startLessonNum + i : '-'}</span>
-                        <span className="hour-text">{h > 0 ? h : '-'}</span>
-                      </div>
+                  <div key={i} className="lesson-row-item">
+                    <div className="col-lesson-box">
+                      <div className="lesson-badge-simple">{h > 0 ? startLessonNum + i : '-'}</div>
                     </div>
-                    <div className="col-topic-box-main">
+                    <div className="col-topic-box-sub">
                       {h > 0 ? (
                         <>
                           <textarea className="lesson-textarea" value={gData.topics?.[i] || ''} onChange={(e) => updateTopic(wIdx, currentGroup.val, i, e.target.value)} placeholder={`${startLessonNum + i}차시 주제 입력...`} />
@@ -596,10 +594,7 @@ function ProgressRecordPage() {
               </div>
 
               <div className="col-small-box weekly-hours-col">
-                <div className="weekly-hours-input-wrapper">
-                  <input type="number" className="row-input center bold" value={h} onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} />
-                  <span className="unit-label">시간</span>
-                </div>
+                <input type="number" className="row-input center bold" value={h} onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} />
               </div>
 
               <div className="col-small-box acc-highlight"><div className="acc-value">{gData?.accH || 0}</div></div>
