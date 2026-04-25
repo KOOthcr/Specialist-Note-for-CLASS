@@ -103,8 +103,13 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-top: 8px solid var(--color-primary);
-  transition: transform 0.3s ease;
+  border-top: 12px solid var(--color-primary); /* 두께 증가 */
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
 }
 
 .team-name-input {

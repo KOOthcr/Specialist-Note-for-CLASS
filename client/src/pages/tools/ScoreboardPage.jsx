@@ -16,11 +16,17 @@ function ScoreboardPage() {
   // 팀 데이터 상태
   const [teams, setTeams] = useState([]);
 
-  // 60가지 색상 생성 (HSL 활용)
-  const generateColors = (count) => {
-    return Array.from({ length: count }, (_, i) => `hsl(${(i * 360) / count}, 70%, 50%)`);
-  };
-  const colors = generateColors(60);
+  // 기본 팀 색상 (빨강, 파랑, 주황, 초록...)
+  const colors = [
+    '#ef4444', // 빨강
+    '#3b82f6', // 파랑
+    '#f97316', // 주황
+    '#22c55e', // 초록
+    '#8b5cf6', // 보라
+    '#ec4899', // 핑크
+    '#06b6d4', // 하늘
+    '#eab308'  // 노랑
+  ];
 
   // 팀 수 변경 시 데이터 동기화
   useEffect(() => {
@@ -162,6 +168,7 @@ function ScoreboardPage() {
 
                 <button 
                   className="control-btn-circle btn-plus"
+                  style={{ background: team.color }}
                   onClick={() => handleScoreChange(team.id, settings.increment)}
                 >
                   +
@@ -173,7 +180,7 @@ function ScoreboardPage() {
                 <span className="set-point-label">SET POINT</span>
                 <div className="set-point-value">
                   <span className="set-btn" onClick={() => handleSetChange(team.id, -1)}>‹</span>
-                  <span className="set-number">{team.sets}</span>
+                  <span className="set-number" style={{ color: team.color }}>{team.sets}</span>
                   <span className="set-btn" onClick={() => handleSetChange(team.id, 1)}>›</span>
                 </div>
               </div>
