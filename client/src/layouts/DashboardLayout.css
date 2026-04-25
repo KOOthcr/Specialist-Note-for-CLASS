@@ -330,7 +330,7 @@
   animation: fadeIn 0.3s ease;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1600px) {
   .mobile-menu-toggle {
     display: flex;
   }
