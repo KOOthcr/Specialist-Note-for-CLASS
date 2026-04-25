@@ -429,6 +429,11 @@ function ProgressCheckPage() {
       const newOffsets = { ...offsets, [row.classNum]: newOffset };
       setOffsets(newOffsets);
       
+      // 오프셋 즉시 자동 저장 (도미노 효과 보장)
+      if (currentUser) {
+        setDoc(doc(db, 'users', currentUser.uid, 'offsets', selectedGroupId), newOffsets, { merge: true });
+      }
+
       // 도미노 효과: 같은 반의 모든 행을 새로운 오프셋 기준으로 일괄 업데이트
       newData = newData.map(r => {
         if (r.classNum === row.classNum) {
@@ -451,6 +456,11 @@ function ProgressCheckPage() {
         const offset = newLessonNum - row.baseCalcPeriod;
         const newOffsets = { ...offsets, [row.classNum]: offset };
         setOffsets(newOffsets);
+
+        // 오프셋 즉시 자동 저장 (도미노 효과 보장)
+        if (currentUser) {
+          setDoc(doc(db, 'users', currentUser.uid, 'offsets', selectedGroupId), newOffsets, { merge: true });
+        }
         
         newData = newData.map(r => {
           if (r.classNum === row.classNum) {
