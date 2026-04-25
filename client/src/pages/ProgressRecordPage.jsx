@@ -529,12 +529,11 @@ function ProgressRecordPage() {
         <div className="plan-header-row">
           <div className="col-week-header">주</div>
           <div className="col-period-header">기 간</div>
-          <div className="col-lesson-header">차시</div>
-          <div className="col-small-header">시수</div>
           <div className="col-topic-header">
             <div className="topic-title">{currentGroup?.name} {selectedSemester}학기 진도 계획</div>
-            <div className="topic-subtitle">학습 주제 및 내용 (시수별 개별 입력)</div>
+            <div className="topic-subtitle">학습 주제 및 내용 (우측 X 버튼으로 개별 삭제 가능)</div>
           </div>
+          <div className="col-small-header">시수</div>
           <div className="col-small-header">누계</div>
         </div>
 
@@ -549,9 +548,14 @@ function ProgressRecordPage() {
 
           return (
             <div key={wIdx} className="plan-week-row">
-              <div className="col-week-box">
-                <input type="number" className="row-input" value={plan.week} onChange={(e) => updateCell(wIdx, 'week', e.target.value)} />
+              <div className="col-week-box week-control-box">
+                <div className="week-num-label">第 {plan.week} 주</div>
+                <div className="weekly-h-setter">
+                  <span className="h-label">주간 시수:</span>
+                  <input type="number" className="h-input-small" value={h} onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} />
+                </div>
               </div>
+              
               <div className="col-period-box">
                 <div className="period-input-group">
                   <input 
@@ -572,12 +576,10 @@ function ProgressRecordPage() {
                 </div>
               </div>
               
-              <div className="col-lesson-topic-container">
+              <div className="col-topic-and-hours-container">
                 {Array.from({ length: Math.max(1, h) }).map((_, i) => (
-                  <div key={i} className="lesson-row-item">
-                    <div className="col-lesson-box"><div className="lesson-badge-simple">{h > 0 ? startLessonNum + i : '-'}</div></div>
-                    <div className="col-small-box-inner">{h > 0 ? '1' : '-'}</div>
-                    <div className="col-topic-box-sub">
+                  <div key={i} className="lesson-row-item-combined">
+                    <div className="col-topic-box-main">
                       {h > 0 ? (
                         <>
                           <textarea className="lesson-textarea" value={gData.topics?.[i] || ''} onChange={(e) => updateTopic(wIdx, currentGroup.val, i, e.target.value)} placeholder={`${startLessonNum + i}차시 주제 입력...`} />

@@ -219,21 +219,104 @@
   background-color: #f8fafc;
 }
 
-/* 📸 열 비율 설정 (차시 컬럼 분리형) */
-.col-week-header, .col-week-box { flex: 0 0 50px; border-right: 1px solid #e2e8f0; }
-.col-period-header, .col-period-box { flex: 0 0 250px; border-right: 1px solid #e2e8f0; }
-.col-lesson-header, .col-lesson-box { flex: 0 0 60px; border-right: 1px solid #e2e8f0; }
-.col-small-header, .col-small-box { flex: 0 0 75px; border-right: 1px solid #e2e8f0; }
-.col-small-box-inner { width: 45px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #94a3b8; border-right: 1px solid #f1f5f9; background: #fafafa; }
-.col-topic-header, .col-lesson-topic-container { flex: 1; display: flex; flex-direction: column; }
+/* 테이블 열 비율 재조정 */
+.col-week-header, .col-week-box { flex: 0 0 100px; border-right: 1px solid #e2e8f0; }
+.col-period-header, .col-period-box { flex: 0 0 180px; border-right: 1px solid #e2e8f0; }
+.col-topic-header, .col-topic-and-hours-container { flex: 1; display: flex; flex-direction: column; }
+.col-small-header, .col-small-box { flex: 0 0 80px; border-right: 1px solid #e2e8f0; }
 .col-small-box:last-child { border-right: none; }
 
-/* 📸 박스 내부 중앙 정렬 강화 */
-.col-week-box, .col-period-box, .col-small-box {
+/* 주차 컨트롤 박스 (왼쪽) */
+.week-control-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8fafc;
+}
+
+.week-num-label {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.weekly-h-setter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.h-label {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.h-input-small {
+  width: 40px;
+  border: none;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: #2e7d32;
+  outline: none;
+}
+
+/* 주제 + 시수 통합 행 */
+.lesson-row-item-combined {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid #f1f5f9;
+  min-height: 80px;
+}
+
+.lesson-row-item-combined:last-child {
+  border-bottom: none;
+}
+
+.col-topic-box-main {
+  flex: 1;
+  padding: 12px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* 📸 스크린샷 시수 배지 스타일 */
+.col-hour-badge-box {
+  flex: 0 0 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60px; /* 최소 높이 보장 */
+  border-left: 1px solid #e2e8f0;
+  background-color: #f8faff;
+}
+
+.hour-badge-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.hour-num {
+  font-size: 20px;
+  font-weight: 900;
+  color: #1e293b;
+}
+
+.hour-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 2px;
 }
 
 /* 헤더 텍스트 스타일 복구 */
