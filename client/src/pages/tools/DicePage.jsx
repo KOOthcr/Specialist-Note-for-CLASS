@@ -6,16 +6,36 @@ function DicePage() {
   const [diceValues, setDiceValues] = useState([1]);
   const [isRolling, setIsRolling] = useState(false);
 
+  const playRollSound = () => {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioContext();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(150 + Math.random() * 100, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.1);
+    } catch (e) {}
+  };
+
   const rollDice = () => {
     if (isRolling) return;
     setIsRolling(true);
 
-    // 굴러가는 애니메이션 효과를 위해 여러 번 값을 변경
     let rolls = 0;
     const maxRolls = 10;
     
     const rollInterval = setInterval(() => {
       setDiceValues(Array.from({ length: numDice }, () => Math.floor(Math.random() * 6) + 1));
+      playRollSound(); // 주사위 굴리는 소리 실행
       rolls++;
       
       if (rolls >= maxRolls) {
