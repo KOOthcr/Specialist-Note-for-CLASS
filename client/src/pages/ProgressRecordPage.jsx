@@ -548,12 +548,8 @@ function ProgressRecordPage() {
 
           return (
             <div key={wIdx} className="plan-week-row">
-              <div className="col-week-box week-control-box">
+              <div className="col-week-box">
                 <div className="week-num-label">第 {plan.week} 주</div>
-                <div className="weekly-h-setter">
-                  <span className="h-label">주간 시수:</span>
-                  <input type="number" className="h-input-small" value={h} onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} />
-                </div>
               </div>
               
               <div className="col-period-box">
@@ -579,6 +575,12 @@ function ProgressRecordPage() {
               <div className="col-topic-and-hours-container">
                 {Array.from({ length: Math.max(1, h) }).map((_, i) => (
                   <div key={i} className="lesson-row-item-combined">
+                    <div className="col-hour-badge-box">
+                      <div className="hour-badge-inner">
+                        <span className="hour-num">{h > 0 ? startLessonNum + i : '-'}</span>
+                        <span className="hour-text">{h > 0 ? h : '-'}</span>
+                      </div>
+                    </div>
                     <div className="col-topic-box-main">
                       {h > 0 ? (
                         <>
