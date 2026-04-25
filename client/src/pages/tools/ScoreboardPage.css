@@ -80,7 +80,7 @@
 }
 
 input:checked + .slider {
-  background-color: #388e3c;
+  background-color: #f97316;
 }
 
 input:checked + .slider:before {
@@ -158,12 +158,12 @@ input:checked + .slider:before {
 }
 
 .btn-plus {
-  background: #388e3c;
+  background: #f97316;
   color: white;
 }
 
 .btn-plus:hover {
-  background: #2e7d32;
+  background: #ea580c;
   transform: scale(1.1);
 }
 

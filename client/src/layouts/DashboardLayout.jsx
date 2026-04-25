@@ -97,7 +97,7 @@ function DashboardLayout() {
         {/* 학급 선택 영역 */}
         {/* 사이드바 프로필 영역 */}
         <div className="sidebar-header profile-section">
-          <div className="profile-card">
+          <div style={{ position: 'relative', width: '100%', textAlign: 'center' }}>
             <div className="profile-subtitle">{teacherName} 선생님의</div>
             <div className="profile-title">{roomName} 전담교실</div>
             <button 
@@ -106,13 +106,14 @@ function DashboardLayout() {
               title="정보 수정"
               style={{
                 position: 'absolute',
-                top: '10px',
-                right: '10px',
+                top: '50%',
+                right: '-10px',
+                transform: 'translateY(-50%)',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '14px',
-                opacity: 0.3,
+                fontSize: '18px',
+                opacity: 0.6,
                 padding: '4px'
               }}
             >

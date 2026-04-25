@@ -286,13 +286,13 @@ input.number-box:disabled {
 }
 
 .btn-start {
-  background: #388e3c;
+  background: #f97316;
   color: white;
   min-width: 180px;
 }
 
 .btn-start:hover {
-  background: #2e7d32;
+  background: #ea580c;
   transform: scale(1.05);
 }
 
