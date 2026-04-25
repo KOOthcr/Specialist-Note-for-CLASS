@@ -157,6 +157,7 @@ function StudentPage() {
       try {
         await setDoc(docRef, { date: selectedDate, categoryId: growthType, groupId: classDocId, groupType: entryMode, records: { [studentDocId]: { values, value: values[0] || '', note: growthMemo } }, updated_at: new Date().toISOString() }, { merge: true });
         showAlert('성장 기록이 성공적으로 제출되어 선생님 기록표에 즉시 반영되었습니다! 😊', '제출 완료');
+        closeModal();
       } catch (e) { console.error('기록 제출 실패:', e); showAlert('기록 제출 중 오류가 발생했습니다.', '오류', 'error'); }
     } else if (type === 'diary' || type === 'qna') {
       if (!teacherUid || !studentDocId) { showAlert('데이터베이스 연결 정보를 찾을 수 없습니다.', '오류', 'error'); return; }
