@@ -163,7 +163,8 @@ function ProgressCheckPage() {
     let res = findMatch(todayTime);
     if (res.index === -1) {
       const day = today.getDay();
-      if (day === 0) res = findMatch(todayTime + 86400000);
+      // 일요일(0)은 금요일(-2일) 기준, 토요일(6)은 금요일(-1일) 기준으로 주차 판단
+      if (day === 0) res = findMatch(todayTime - (2 * 86400000));
       else if (day === 6) res = findMatch(todayTime - 86400000);
     }
 
@@ -342,15 +343,18 @@ function ProgressCheckPage() {
           });
         } else {
           const rowKey = group.type === 'grade' ? `${cls.classNum}_off` : 'club_off';
-          let lessonsBeforeToday = 0;
+          let lessonsInWeek = 0;
+          // 일요일(-1)이나 토요일(5)이면 금요일(4)까지 모든 수업 합산
+          const checkUntil = (dayIdx < 0 || dayIdx > 4) ? 5 : dayIdx;
+          
           if (timetable.length > 0) {
-            for (let d = 0; d < Math.max(0, dayIdx); d++) {
+            for (let d = 0; d < checkUntil; d++) {
               for (let p = 0; p < timetable.length; p++) {
-                if (String(timetable[p][d]) === String(cls.id)) lessonsBeforeToday++;
+                if (String(timetable[p][d]) === String(cls.id)) lessonsInWeek++;
               }
             }
           }
-          const finalPeriod = baseLessonNum + lessonsBeforeToday + (groupOffsets[cls.classNum] || 0);
+          const finalPeriod = baseLessonNum + lessonsInWeek + (groupOffsets[cls.classNum] || 0);
           const autoActivity = allSemesterTopics[finalPeriod - 1] || '';
 
           if (savedRecords && savedRecords[rowKey]) {
