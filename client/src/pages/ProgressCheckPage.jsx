@@ -392,19 +392,22 @@ function ProgressCheckPage() {
     let newData = [...tableData];
     newData[idx][field] = value;
 
-    // [1] 오늘 수업 여부 토글 시 오프셋 자동 조정 (차시 자동 증감)
+    // [1] 오늘 수업 여부 토글 시: 화면에 보이는 현재 차시를 기준으로 정확히 +-1 조정
     if (field === 'isTodayLesson') {
       const row = newData[idx];
-      const currentOffset = offsets[row.classNum] || 0;
-      // 수업 없음(false)으로 바뀌면 차시 -1, 오늘 수업(true)으로 바뀌면 차시 +1
-      const newOffset = value === false ? currentOffset - 1 : currentOffset + 1;
+      const currentNum = Number(row.lesson_count) || 0;
+      // 수업 없음으로 바뀌면 현재 번호에서 1을 뺌, 오늘 수업으로 복구하면 1을 더함
+      const targetNum = value === false ? currentNum - 1 : currentNum + 1;
+      
+      // 새로운 오프셋 계산: (목표 차시 - 시스템 기초 계산값)
+      const newOffset = targetNum - (row.baseCalcPeriod || 0);
       const newOffsets = { ...offsets, [row.classNum]: newOffset };
       setOffsets(newOffsets);
       
-      // 도미노 효과 적용
+      // 도미노 효과: 같은 반의 모든 행을 새로운 오프셋 기준으로 일괄 업데이트
       newData = newData.map(r => {
         if (r.classNum === row.classNum) {
-          const calcP = r.baseCalcPeriod + newOffset;
+          const calcP = (r.baseCalcPeriod || 0) + newOffset;
           return { 
             ...r, 
             lesson_count: String(calcP),
@@ -415,7 +418,7 @@ function ProgressCheckPage() {
       });
     }
 
-    // [2] 차시 수동 수정 시 오프셋 계산 및 도미노 효과
+    // [2] 차시 수동 수정 시: 입력한 번호를 기준으로 오프셋 재설정 및 도미노 효과
     if (field === 'lesson_count') {
       const row = newData[idx];
       const newLessonNum = Number(value);
