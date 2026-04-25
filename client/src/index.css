@@ -34,8 +34,8 @@ input {
   outline: none;
 }
 
-/* 스크롤바 숨기기 (모바일 환경과 유사하게) */
-::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
+/* 수업 도구 전용 컨테이너 (가로 중앙 정렬) */
+.tool-page-container {
+  padding: 32px 20px;
+  width: 100%;
 }

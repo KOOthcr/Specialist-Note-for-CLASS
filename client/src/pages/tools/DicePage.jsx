@@ -9,29 +9,21 @@ function DicePage() {
 
   const playRollSound = () => {
     try {
-      if (!audioCtxRef.current) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtxRef.current = new AudioContext();
-      }
-      
-      const audioCtx = audioCtxRef.current;
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioContext();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
-      oscillator.type = 'triangle';
-      oscillator.frequency.setValueAtTime(150 + Math.random() * 100, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+      oscillator.type = 'square'; // 더 자극적이고 잘 들리는 square파 사용
+      oscillator.frequency.setValueAtTime(150 + Math.random() * 200, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); // 볼륨 대폭 증가
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
 
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
 
       oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.1);
+      oscillator.stop(audioCtx.currentTime + 0.12);
     } catch (e) {
       console.error('Audio error:', e);
     }
