@@ -36,6 +36,35 @@ function RoulettePage() {
     setResult(null);
   };
 
+  // 효과음 생성기
+  const playSound = (freq, type, duration, vol = 0.1) => {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioCtx = new AudioContext();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + duration);
+      setTimeout(() => audioCtx.close(), duration * 1000 + 100);
+    } catch (e) {}
+  };
+
+  const playTickSound = () => playSound(1000, 'sine', 0.05, 0.05);
+  const playWinSound = () => {
+    [523.25, 659.25, 783.99].forEach((f, i) => {
+      setTimeout(() => playSound(f, 'triangle', 0.3, 0.1), i * 150);
+    });
+  };
+
   const spin = () => {
     if (isSpinning || items.length < 2) {
       if (items.length < 2) showAlert('최소 2개 이상의 항목이 필요합니다.', '알림');
@@ -45,34 +74,49 @@ function RoulettePage() {
     setIsSpinning(true);
     setResult(null);
 
-    // 랜덤 각도 계산 (기본 5바퀴(1800도) + 랜덤 추가 각도)
     const extraDegrees = Math.floor(Math.random() * 360);
     const spinDegrees = 1800 + extraDegrees;
     const newRotation = rotation + spinDegrees;
     
     setRotation(newRotation);
 
+    // 회전 소리 연출 (애니메이션과 동기화)
+    const startTime = performance.now();
+    const duration = 3000;
+    const sliceAngle = 360 / items.length;
+    let lastTickAngle = rotation;
+
+    const checkTick = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // cubic-bezier(0.2, 0.8, 0.2, 1) 근사치 계산
+      // easeOutQuart: 1 - (1 - x)^4
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const currentRotation = rotation + (spinDegrees * easeProgress);
+      
+      if (Math.abs(currentRotation - lastTickAngle) >= sliceAngle) {
+        playTickSound();
+        lastTickAngle = currentRotation;
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(checkTick);
+      }
+    };
+    requestAnimationFrame(checkTick);
+
     // 애니메이션 종료 후 결과 계산
     setTimeout(() => {
       setIsSpinning(false);
       
-      // 결과 인덱스 계산
-      // 회전이 끝난 후, CSS 각도(0도는 12시 방향에서 시작한다고 가정할 때, transform: rotate 기준)
-      // 항목의 각도 크기
-      // 항목의 각도 크기
-      const sliceAngle = 360 / items.length;
-      
-      // 최종 각도를 360으로 나눈 나머지 (시계 방향 회전)
-      // CSS rotate(deg)에서 0도는 3시 방향이므로, 12시 방향(포인터 위치)은 -90도 또는 270도 지점임.
-      // 하지만 conic-gradient는 12시(0도)부터 시작함.
+      const sliceAngleFinal = 360 / items.length;
       const normalizedRotation = newRotation % 360;
-      
-      // 포인터(12시 방향)에 위치한 항목 계산
-      // 회전된 각도만큼 반대 방향으로 이동하여 0도(12시) 위치의 인덱스를 찾음
-      const winningIndex = Math.floor((360 - normalizedRotation) % 360 / sliceAngle) % items.length;
+      const winningIndex = Math.floor((360 - normalizedRotation) % 360 / sliceAngleFinal) % items.length;
       
       setResult(items[winningIndex]);
-    }, 3000);
+      playWinSound(); // 당첨 소리
+    }, duration);
   };
 
   // 룰렛 배경 스타일 (conic-gradient)
