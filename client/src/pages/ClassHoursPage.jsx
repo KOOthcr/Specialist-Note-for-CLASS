@@ -9,6 +9,7 @@ function ClassHoursPage() {
   const days = ['월요일', '화요일', '수요일', '목요일', '금요일'];
   const periods = ['0교시', '1교시', '2교시', '3교시', '4교시', '5교시', '6교시', '7교시'];
 
+  const [classOptions, setClassOptions] = useState([{ id: 'none', name: '선택 안함' }]);
   const [timetable, setTimetable] = useState(Array(8).fill(null).map(() => Array(5).fill('none')));
   const [currentUser, setCurrentUser] = useState(null);
 
