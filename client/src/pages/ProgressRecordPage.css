@@ -235,6 +235,15 @@
   background-color: #f8fafc;
 }
 
+/* 📸 박스 내부 중앙 정렬 강화 (시수, 누계용) */
+.col-small-box {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  min-height: 60px;
+}
+
 .week-num-label {
   font-size: 16px;
   font-weight: 800;
@@ -263,6 +272,31 @@
   border-radius: 50%;
   border: 1px solid #d1fae5;
   box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+}
+
+/* 시수 열 강조 및 중앙 정렬 (누계처럼 관리) */
+.weekly-hours-col {
+  background-color: #f8faff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-left: 1px solid #e2e8f0;
+}
+
+.weekly-hours-col .row-input {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+  background: transparent;
+  border: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 주제 입력 영역 */
