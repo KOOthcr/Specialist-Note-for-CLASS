@@ -224,6 +224,8 @@ function DashboardLayout() {
                   <a href="/main/tools/roulette" className={`tab-item ${location.pathname === '/main/tools/roulette' ? 'active-tab' : ''}`}>🎯 돌림판</a>
                   <a href="/main/tools/noise" className={`tab-item ${location.pathname === '/main/tools/noise' ? 'active-tab' : ''}`}>🔔 소음측정기</a>
                   <a href="/main/tools/dust" className={`tab-item ${location.pathname === '/main/tools/dust' ? 'active-tab' : ''}`}>☁️ 미세먼지</a>
+                  <a href="/main/tools/scoreboard" className={`tab-item ${location.pathname === '/main/tools/scoreboard' ? 'active-tab' : ''}`}>📊 점수판</a>
+                  <a href="/main/tools/whiteboard" className={`tab-item ${location.pathname === '/main/tools/whiteboard' ? 'active-tab' : ''}`}>🖍️ 판서</a>
                 </>
               ) : (
                 <span className="tab-item active-tab">{getTabTitle()}</span>

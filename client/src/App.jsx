@@ -18,6 +18,8 @@ import CoinPage from './pages/tools/CoinPage';
 import RoulettePage from './pages/tools/RoulettePage';
 import NoiseMeterPage from './pages/tools/NoiseMeterPage';
 import DustPage from './pages/tools/DustPage';
+import ScoreboardPage from './pages/tools/ScoreboardPage';
+import WhiteboardPage from './pages/tools/WhiteboardPage';
 import MissionPage from './pages/MissionPage';
 import StudentPage from './pages/StudentPage';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -57,6 +59,8 @@ function App() {
         <Route path="tools/roulette" element={<RoulettePage />} />
         <Route path="tools/noise" element={<NoiseMeterPage />} />
         <Route path="tools/dust" element={<DustPage />} />
+        <Route path="tools/scoreboard" element={<ScoreboardPage />} />
+        <Route path="tools/whiteboard" element={<WhiteboardPage />} />
         
         <Route path="mission" element={<MissionPage />} />
       </Route>
