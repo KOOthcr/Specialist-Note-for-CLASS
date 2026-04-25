@@ -135,8 +135,10 @@ function RoulettePage() {
           <h2 className="tool-title">🎯 돌림판</h2>
 
           <div className="wheel-container">
-            {/* 지시선 */}
-            <div className="pointer"></div>
+            {/* 지시선 (화살표) */}
+            <div className="pointer-container">
+              <div className="pointer-arrow"></div>
+            </div>
             
             {/* 룰렛 */}
             <div 
@@ -145,20 +147,22 @@ function RoulettePage() {
               style={getWheelStyle()}
             >
               {items.map((item, idx) => {
-                const angle = (360 / items.length) * idx;
-                const textAngle = angle + (360 / items.length) / 2;
+                const sliceAngle = 360 / items.length;
+                const textAngle = (sliceAngle * idx) + (sliceAngle / 2);
                 return (
                   <div 
                     key={idx} 
                     className="wheel-text"
                     style={{ 
-                      transform: `rotate(${textAngle}deg) translateY(-100px) rotate(-90deg)`,
+                      transform: `rotate(${textAngle}deg)`,
                     }}
                   >
-                    {item}
+                    <span className="item-label">{item}</span>
                   </div>
                 );
               })}
+              {/* 중앙 원 (핀) */}
+              <div className="wheel-center"></div>
             </div>
           </div>
 

@@ -122,42 +122,94 @@
   margin: 20px 0 40px 0;
 }
 
-.pointer {
+.pointer-container {
   position: absolute;
-  top: -15px;
+  top: -20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 30px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pointer-arrow {
+  width: 40px;
   height: 40px;
   background-color: var(--color-danger);
   clip-path: polygon(50% 100%, 0 0, 100% 0);
-  z-index: 10;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  position: relative;
+}
+
+.pointer-arrow::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 15px;
+  background-color: var(--color-danger-dark, #c53030);
+  border-radius: 2px;
 }
 
 .wheel {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 4px solid white;
-  box-shadow: 0 0 0 4px #e2e8f0, 0 10px 20px rgba(0,0,0,0.1);
+  border: 8px solid white;
+  box-shadow: 0 0 0 1px #e2e8f0, 0 10px 30px rgba(0,0,0,0.15);
   position: relative;
   overflow: hidden;
+  transition: transform 3s cubic-bezier(0.15, 0, 0.15, 1);
 }
 
 .wheel-text {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform-origin: 0 0;
-  font-weight: bold;
+  width: 50%;
+  height: 0;
+  transform-origin: left center;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+
+.item-label {
+  font-weight: 800;
   color: white;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  font-size: 16px;
   white-space: nowrap;
-  font-size: 14px;
-  width: 100px;
-  text-align: right;
-  /* 텍스트가 조각의 중앙에 오도록 위치 및 여백 조정이 필요함 */
+  pointer-events: none;
+  /* 텍스트가 90도 회전되어 조각 안에서 바깥쪽으로 읽히도록 설정 */
+  transform: rotate(0deg);
+}
+
+.wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  z-index: 5;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.wheel-center::after {
+  content: '🎯';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
 }
 
 .roulette-result {
