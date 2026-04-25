@@ -256,6 +256,25 @@ function ProgressRecordPage() {
     setPlans(newPlans);
   };
 
+  const removeTopic = (wIdx, groupVal, topicIdx) => {
+    let newPlans = [...currentPlans];
+    const gData = newPlans[wIdx].grades[groupVal];
+    if (gData && gData.topics) {
+      const newTopics = [...gData.topics];
+      newTopics.splice(topicIdx, 1);
+      const newH = Math.max(0, Number(gData.weeklyH || 0) - 1);
+      
+      newPlans[wIdx].grades[groupVal] = {
+        ...gData,
+        topics: newTopics,
+        weeklyH: newH
+      };
+      
+      newPlans = recalculateAccHours(newPlans, groupVal);
+      setPlans(newPlans);
+    }
+  };
+
   const updateTopic = (wIdx, groupVal, topicIdx, value) => {
     const newPlans = [...currentPlans];
     if (!newPlans[wIdx].grades[groupVal].topics) {
@@ -538,6 +557,7 @@ function ProgressRecordPage() {
                     <div className="col-lesson-box"><div className="lesson-badge-simple">{startLessonNum + i}</div></div>
                     <div className="col-topic-box-sub">
                       <textarea className="lesson-textarea" value={gData.topics?.[i] || ''} onChange={(e) => updateTopic(wIdx, currentGroup.val, i, e.target.value)} placeholder={`${startLessonNum + i}차시 주제 입력...`} />
+                      <button className="btn-delete-topic" onClick={() => removeTopic(wIdx, currentGroup.val, i)} title="이 차시 삭제">✕</button>
                     </div>
                   </div>
                 ))}
