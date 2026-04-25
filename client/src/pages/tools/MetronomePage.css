@@ -13,33 +13,6 @@
   font-family: 'Pretendard', sans-serif;
 }
 
-.metronome-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
-.header-left, .header-right {
-  display: flex;
-  gap: 20px;
-}
-
-.icon-btn {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  font-size: 24px;
-  cursor: pointer;
-  transition: color 0.2s;
-  padding: 8px;
-}
-
-.icon-btn:hover {
-  color: #f8fafc;
-}
-
 .metronome-main {
   display: flex;
   width: 100%;

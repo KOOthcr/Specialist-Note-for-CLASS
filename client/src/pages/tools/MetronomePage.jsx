@@ -116,18 +116,6 @@ function MetronomePage() {
 
   return (
     <div className="metronome-container">
-      <div className="metronome-header">
-        <div className="header-left">
-          <button className="icon-btn">⚙️</button>
-          <button className="icon-btn">⏱️</button>
-        </div>
-        <div className="header-right">
-          <button className="icon-btn">✋</button>
-          <button className="icon-btn">⛶</button>
-          <button className="icon-btn">📑</button>
-        </div>
-      </div>
-
       <div className="metronome-main">
         <div className="display-section">
           <div className="beat-indicator">
