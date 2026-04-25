@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './DicePage.css';
 
 function DicePage() {
   const [numDice, setNumDice] = useState(1);
   const [diceValues, setDiceValues] = useState([1]);
   const [isRolling, setIsRolling] = useState(false);
+  const audioCtxRef = useRef(null);
 
   const playRollSound = () => {
     try {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const audioCtx = new AudioContext();
+      if (!audioCtxRef.current) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtxRef.current = new AudioContext();
+      }
+      
+      const audioCtx = audioCtxRef.current;
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
@@ -23,7 +32,9 @@ function DicePage() {
 
       oscillator.start();
       oscillator.stop(audioCtx.currentTime + 0.1);
-    } catch (e) {}
+    } catch (e) {
+      console.error('Audio error:', e);
+    }
   };
 
   const rollDice = () => {
@@ -35,7 +46,7 @@ function DicePage() {
     
     const rollInterval = setInterval(() => {
       setDiceValues(Array.from({ length: numDice }, () => Math.floor(Math.random() * 6) + 1));
-      playRollSound(); // 주사위 굴리는 소리 실행
+      playRollSound(); 
       rolls++;
       
       if (rolls >= maxRolls) {
@@ -51,7 +62,6 @@ function DicePage() {
   };
 
   const renderDiceFace = (value) => {
-    // 주사위 눈금 렌더링 (점 표시)
     const dots = {
       1: ['center'],
       2: ['top-left', 'bottom-right'],

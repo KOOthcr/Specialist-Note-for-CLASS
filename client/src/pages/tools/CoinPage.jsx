@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './CoinPage.css';
 
 function CoinPage() {
   const [result, setResult] = useState('앞면');
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipCount, setFlipCount] = useState(0);
+  const audioCtxRef = useRef(null);
+
+  const getAudioCtx = () => {
+    if (!audioCtxRef.current) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtxRef.current = new AudioContext();
+    }
+    if (audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume();
+    }
+    return audioCtxRef.current;
+  };
 
   const playFlipSound = () => {
     try {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const audioCtx = new AudioContext();
+      const audioCtx = getAudioCtx();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
@@ -29,8 +40,7 @@ function CoinPage() {
 
   const playResultSound = () => {
     try {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const audioCtx = new AudioContext();
+      const audioCtx = getAudioCtx();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
@@ -52,14 +62,13 @@ function CoinPage() {
     
     setIsFlipping(true);
     setFlipCount(prev => prev + 1);
-    playFlipSound(); // 던질 때 소리
+    playFlipSound(); 
     
-    // 1초 애니메이션 후 결과 결정
     setTimeout(() => {
       const isHeads = Math.random() < 0.5;
       setResult(isHeads ? '앞면' : '뒷면');
       setIsFlipping(false);
-      playResultSound(); // 결과 나올 때 소리
+      playResultSound(); 
     }, 1000);
   };
 
@@ -84,12 +93,11 @@ function CoinPage() {
         </div>
 
         <button 
-          className="control-btn start-btn" 
+          className="coin-flip-btn" 
           onClick={flipCoin}
           disabled={isFlipping}
-          style={{ maxWidth: '300px', width: '100%', padding: '16px' }}
         >
-          던지기
+          {isFlipping ? '던지는 중...' : '동전 던지기'}
         </button>
       </div>
     </div>
