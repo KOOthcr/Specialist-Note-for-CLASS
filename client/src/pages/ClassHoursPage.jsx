@@ -13,54 +13,64 @@ function ClassHoursPage() {
   const [timetable, setTimetable] = useState(Array(8).fill(null).map(() => Array(5).fill('none')));
   const [currentUser, setCurrentUser] = useState(null);
 
-  // 서버에서 시간표 데이터 불러오기
+  // 1. 사용자 인증 상태 관리
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (!user) return;
-      setCurrentUser(user);
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user || null);
+    });
+    return () => unsubscribe();
+  }, []);
 
+  // 2. 사용자 정보가 확인되면 데이터 불러오기
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const fetchData = async () => {
+      const uid = currentUser.uid;
+      
       try {
-        // 1. 서버(Firestore) 데이터 확인
-        const docRef = doc(db, 'users', user.uid, 'settings', 'timetable');
-        const snap = await getDoc(docRef);
+        // [1] 학급 목록 가져오기
+        const classesRef = collection(db, 'users', uid, 'classes');
+        const classesSnap = await getDocs(classesRef);
+        const classesData = classesSnap.docs.map(d => ({
+          id: d.id,
+          name: `${d.data().grade}학년 ${d.data().class_number}반`,
+          type: 'class'
+        })).sort((a, b) => a.name.localeCompare(b.name));
+
+        // [2] 동아리 목록 가져오기
+        const clubsRef = collection(db, 'users', uid, 'clubs');
+        const clubsSnap = await getDocs(clubsRef);
+        const clubsData = clubsSnap.docs.map(d => ({
+          id: d.id,
+          name: `⭐ ${d.data().name}`,
+          type: 'club'
+        }));
+
+        setClassOptions([{ id: 'none', name: '선택 안함' }, ...classesData, ...clubsData]);
+
+        // [3] 시간표 설정 가져오기
+        const timetableRef = doc(db, 'users', uid, 'settings', 'timetable');
+        const timetableSnap = await getDoc(timetableRef);
         
-        if (snap.exists()) {
-          setTimetable(snap.data().data);
+        if (timetableSnap.exists()) {
+          setTimetable(timetableSnap.data().data || Array(8).fill(null).map(() => Array(5).fill('none')));
         } else {
-          // 2. 서버에 없으면 로컬 데이터 마이그레이션 시도
+          // 마이그레이션 백업
           const saved = localStorage.getItem('master_timetable');
           if (saved) {
             const parsed = JSON.parse(saved);
             const formatted = parsed.length === 7 ? [Array(5).fill('none'), ...parsed] : parsed;
             setTimetable(formatted);
-            // 자동으로 서버에 백업
-            await setDoc(docRef, { data: formatted, updatedAt: new Date().toISOString() });
           }
         }
-
-        // 학급/동아리 목록 가져오기
-        const classesSnapshot = await getDocs(collection(db, 'users', user.uid, 'classes'));
-        const classesData = classesSnapshot.docs.map(doc => ({
-          id: doc.id,
-          name: `${doc.data().grade}학년 ${doc.data().class_number}반`,
-          type: 'class'
-        }));
-
-        const clubsSnapshot = await getDocs(collection(db, 'users', user.uid, 'clubs'));
-        const clubsData = clubsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          name: doc.data().name,
-          type: 'club'
-        }));
-
-        setClassOptions([{ id: 'none', name: '선택 안함' }, ...classesData, ...clubsData]);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("데이터 로드 중 오류 발생:", error);
       }
-    });
+    };
 
-    return () => unsubscribe();
-  }, []);
+    fetchData();
+  }, [currentUser]);
 
   const handleSelectChange = (rowIndex, colIndex, value) => {
     const newTimetable = [...timetable];
