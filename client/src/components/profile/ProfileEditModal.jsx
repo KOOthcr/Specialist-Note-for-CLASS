@@ -166,6 +166,9 @@ function ProfileEditModal({ isOpen, onClose, onUpdate }) {
               placeholder="예) 체육관, 영어1실"
               style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', marginTop: '4px' }}
             />
+            <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '4px' }}>
+              💡 '열정', '도전', '행복'과 같은 멋진 이름을 추천합니다!
+            </p>
           </div>
 
           <div className="modal-actions" style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>

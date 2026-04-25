@@ -209,6 +209,9 @@ function SignupPage() {
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
             />
+            <p style={{ fontSize: '12px', color: 'var(--color-primary)', marginTop: '4px', marginLeft: '2px' }}>
+              💡 '열정', '도전', '행복'과 같은 멋진 이름을 추천합니다!
+            </p>
           </div>
 
           <div className="input-group">
