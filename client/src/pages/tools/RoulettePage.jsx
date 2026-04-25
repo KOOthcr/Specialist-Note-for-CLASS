@@ -17,26 +17,7 @@ function RoulettePage() {
     '#6C5CE7', '#FF8ED4', '#00B894', '#E17055'
   ];
 
-  const handleAddItem = (e) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
-    if (items.includes(inputValue.trim())) {
-      showAlert('이미 존재하는 항목입니다.', '알림');
-      return;
-    }
-    setItems([...items, inputValue.trim()]);
-    setInputValue('');
-    setResult(null);
-  };
-
-  const handleRemoveItem = (index) => {
-    const newItems = [...items];
-    newItems.splice(index, 1);
-    setItems(newItems);
-    setResult(null);
-  };
-
-  // 효과음 생성기
+  // 효과음 재생 함수 (Web Audio API)
   const playSound = (freq, type, duration, vol = 0.1) => {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -65,6 +46,25 @@ function RoulettePage() {
     });
   };
 
+  const handleAddItem = (e) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+    if (items.includes(inputValue.trim())) {
+      showAlert('이미 존재하는 항목입니다.', '알림');
+      return;
+    }
+    setItems([...items, inputValue.trim()]);
+    setInputValue('');
+    setResult(null);
+  };
+
+  const handleRemoveItem = (index) => {
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
+    setResult(null);
+  };
+
   const spin = () => {
     if (isSpinning || items.length < 2) {
       if (items.length < 2) showAlert('최소 2개 이상의 항목이 필요합니다.', '알림');
@@ -74,35 +74,30 @@ function RoulettePage() {
     setIsSpinning(true);
     setResult(null);
 
+    // 랜덤 각도 계산 (기본 5바퀴(1800도) + 랜덤 추가 각도)
     const extraDegrees = Math.floor(Math.random() * 360);
     const spinDegrees = 1800 + extraDegrees;
     const newRotation = rotation + spinDegrees;
     
     setRotation(newRotation);
 
-    // 회전 소리 연출 (애니메이션과 동기화)
+    // 회전 효과음 연출 (애니메이션과 동기화)
     const startTime = performance.now();
     const duration = 3000;
-    const sliceAngle = 360 / items.length;
+    const sliceAngleForSound = 360 / items.length;
     let lastTickAngle = rotation;
 
     const checkTick = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
-      // cubic-bezier(0.2, 0.8, 0.2, 1) 근사치 계산
-      // easeOutQuart: 1 - (1 - x)^4
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const easeProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic으로 근사
       const currentRotation = rotation + (spinDegrees * easeProgress);
       
-      if (Math.abs(currentRotation - lastTickAngle) >= sliceAngle) {
+      if (Math.abs(currentRotation - lastTickAngle) >= sliceAngleForSound) {
         playTickSound();
         lastTickAngle = currentRotation;
       }
-
-      if (progress < 1) {
-        requestAnimationFrame(checkTick);
-      }
+      if (progress < 1) requestAnimationFrame(checkTick);
     };
     requestAnimationFrame(checkTick);
 
@@ -110,13 +105,18 @@ function RoulettePage() {
     setTimeout(() => {
       setIsSpinning(false);
       
-      const sliceAngleFinal = 360 / items.length;
+      // 결과 인덱스 계산
+      const sliceAngle = 360 / items.length;
+      
+      // 최종 각도를 360으로 나눈 나머지 (시계 방향 회전)
       const normalizedRotation = newRotation % 360;
-      const winningIndex = Math.floor((360 - normalizedRotation) % 360 / sliceAngleFinal) % items.length;
+      
+      // 포인터(12시 방향)에 위치한 항목 계산
+      const winningIndex = Math.floor((360 - normalizedRotation) % 360 / sliceAngle) % items.length;
       
       setResult(items[winningIndex]);
-      playWinSound(); // 당첨 소리
-    }, duration);
+      playWinSound(); // 당첨 효과음 재생
+    }, 3000);
   };
 
   // 룰렛 배경 스타일 (conic-gradient)
@@ -194,8 +194,6 @@ function RoulettePage() {
             >
               {items.map((item, idx) => {
                 const sliceAngle = 360 / items.length;
-                // conic-gradient가 12시(0도)부터 시작하므로, 
-                // 텍스트 위치도 12시 기준(각도 - 90도)으로 배치하여 중앙에 오도록 함
                 const textAngle = (sliceAngle * idx) + (sliceAngle / 2) - 90;
                 return (
                   <div 
