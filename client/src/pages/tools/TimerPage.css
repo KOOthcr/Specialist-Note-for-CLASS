@@ -214,14 +214,14 @@ input.number-box:disabled {
   gap: 8px;
 }
 
-.preset-btn {
+.timer-sidebar .preset-btn {
   padding: 10px 0;
   border: 1px solid #e2e8f0;
-  background: white;
+  background: white !important;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: #475569 !important;
   cursor: pointer;
   transition: all 0.2s;
 }

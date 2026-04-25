@@ -104,15 +104,15 @@
   margin-bottom: 10px;
 }
 
-.preset-btn {
+.noise-card .preset-btn {
   padding: 12px;
   border: 2px solid #e2e8f0;
-  background: white;
+  background: white !important;
   border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-text-main);
+  color: #1e293b !important;
   transition: all 0.2s ease;
   text-align: left;
 }
