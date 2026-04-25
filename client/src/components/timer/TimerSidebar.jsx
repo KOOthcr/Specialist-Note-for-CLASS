@@ -12,18 +12,18 @@ function TimerSidebar({ settings, setSettings, isRunning, setMinutes, setSeconds
       {/* 사운드 설정 */}
       <div className="sidebar-section">
         <div className="section-title">🔊 사운드 설정</div>
-        <div className="settings-list">
-          <label className="setting-item">
-            <span className="setting-label">시계음</span>
+        <div className="settings-grid-compact">
+          <label className="setting-item-compact">
+            <span className="setting-label-small">시계음</span>
             <input type="checkbox" checked={settings.clockSound} onChange={(e) => setSettings({...settings, clockSound: e.target.checked})} />
           </label>
-          <label className="setting-item">
-            <span className="setting-label">종료 예고음 (10초 전)</span>
-            <input type="checkbox" checked={settings.warningSound} onChange={(e) => setSettings({...settings, warningSound: e.target.checked})} />
-          </label>
-          <label className="setting-item">
-            <span className="setting-label">종료음</span>
+          <label className="setting-item-compact">
+            <span className="setting-label-small">종료음</span>
             <input type="checkbox" checked={settings.endSound} onChange={(e) => setSettings({...settings, endSound: e.target.checked})} />
+          </label>
+          <label className="setting-item-compact full-width">
+            <span className="setting-label-small">종료 예고음 (10초 전)</span>
+            <input type="checkbox" checked={settings.warningSound} onChange={(e) => setSettings({...settings, warningSound: e.target.checked})} />
           </label>
         </div>
       </div>

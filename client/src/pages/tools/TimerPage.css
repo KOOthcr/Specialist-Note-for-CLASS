@@ -1,28 +1,10 @@
 .timer-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-}
-
-.message-bar {
-  background: white;
-  border-radius: 12px;
-  padding: 15px 25px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  border: 1px solid #e2e8f0;
-}
-
-.message-input {
-  width: 100%;
-  border: none;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--color-text-main);
-  text-align: center;
-  outline: none;
 }
 
 .timer-main-layout {
@@ -41,20 +23,20 @@
 .timer-visual-card {
   background: white;
   border-radius: 24px;
-  padding: 40px;
+  padding: 20px 40px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  min-height: 500px;
+  min-height: 400px;
 }
 
 .clock-canvas-container {
   position: relative;
-  width: 400px;
-  height: 400px;
+  width: 320px;
+  height: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,9 +118,9 @@
 }
 
 input.number-box {
-  font-size: 90px;
+  font-size: 70px;
   line-height: 1;
-  width: 110px;
+  width: 80px;
   text-align: center;
   letter-spacing: -2px;
   background: transparent;
@@ -199,23 +181,31 @@ input.number-box:disabled {
   margin-bottom: 15px;
 }
 
-.settings-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.settings-grid-compact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
-.setting-item {
+.setting-item-compact {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
   cursor: pointer;
 }
 
-.setting-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #64748b;
+.setting-item-compact.full-width {
+  grid-column: span 2;
+}
+
+.setting-label-small {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
 }
 
 .preset-grid {
@@ -269,9 +259,9 @@ input.number-box:disabled {
 }
 
 .main-controls {
-  margin-top: 30px;
+  margin-top: 20px;
   display: flex;
-  gap: 15px;
+  gap: 12px;
 }
 
 .main-btn {

@@ -3,11 +3,12 @@ import './TimerPage.css';
 import { useModal } from '../../components/common/GlobalModal';
 import TimerSidebar from '../../components/timer/TimerSidebar';
 
+const PRESETS = [80, 90, 100, 110, 120, 130, 140, 150, 160, 170];
+
 function TimerPage() {
   const { showAlert } = useModal();
   
   // 상태 변수
-  const [message, setMessage] = useState('즐거운 수업 시간입니다! 📚');
   const [minutes, setMinutes] = useState(5);
   const [seconds, setSeconds] = useState(0);
   const [timeLeft, setTimeLeft] = useState(5 * 60);
@@ -186,17 +187,6 @@ function TimerPage() {
     <div className="tool-page-container">
       <div className="timer-wrapper">
         
-        {/* 상단 메시지 바 */}
-        <div className="message-bar">
-          <input 
-            type="text" 
-            className="message-input" 
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="학생들에게 보여줄 메시지를 입력하세요..."
-          />
-        </div>
-
         <div className="timer-main-layout">
           
           {/* 메인 타이머 영역 */}
