@@ -130,16 +130,33 @@
   color: #1e293b;
 }
 
-.number-box {
+input.number-box {
   font-size: 110px;
   line-height: 1;
   min-width: 140px;
   text-align: center;
   letter-spacing: -2px;
+  background: transparent;
+  border: none;
+  font-weight: 800;
+  color: inherit;
+  outline: none;
+  cursor: text;
+  padding: 0;
+  margin: 0;
 }
 
-.number-box.warning {
+input.number-box:focus {
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 12px;
+}
+
+input.number-box.warning {
   color: #ef4444;
+}
+
+input.number-box:disabled {
+  cursor: default;
 }
 
 .number-separator {

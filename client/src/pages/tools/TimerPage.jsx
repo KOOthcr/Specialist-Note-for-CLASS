@@ -95,6 +95,16 @@ function TimerPage() {
     }
   };
 
+  const handleManualTimeChange = (unit, value) => {
+    if (isRunning) return;
+    const num = parseInt(value) || 0;
+    if (unit === 'min') {
+      setMinutes(Math.max(0, Math.min(99, num)));
+    } else {
+      setSeconds(Math.max(0, Math.min(59, num)));
+    }
+  };
+
   const handleArrowAdjust = (unit, amount) => {
     if (isRunning) return;
     if (unit === 'min') {
@@ -163,9 +173,14 @@ function TimerPage() {
                   {/* 분 조절 */}
                   <div className="digit-group">
                     <button className="arrow-btn" onClick={() => handleArrowAdjust('min', 1)} disabled={isRunning}>▲</button>
-                    <div className={`number-box ${isWarning ? 'warning' : ''}`}>
-                      {String(displayMin).padStart(2, '0')}
-                    </div>
+                    <input 
+                      type="text"
+                      className={`number-box ${isWarning ? 'warning' : ''}`}
+                      value={String(displayMin).padStart(2, '0')}
+                      onChange={(e) => handleManualTimeChange('min', e.target.value)}
+                      disabled={isRunning}
+                      maxLength={2}
+                    />
                     <button className="arrow-btn" onClick={() => handleArrowAdjust('min', -1)} disabled={isRunning}>▼</button>
                   </div>
 
@@ -174,9 +189,14 @@ function TimerPage() {
                   {/* 초 조절 */}
                   <div className="digit-group">
                     <button className="arrow-btn" onClick={() => handleArrowAdjust('sec', 1)} disabled={isRunning}>▲</button>
-                    <div className={`number-box ${isWarning ? 'warning' : ''}`}>
-                      {String(displaySec).padStart(2, '0')}
-                    </div>
+                    <input 
+                      type="text"
+                      className={`number-box ${isWarning ? 'warning' : ''}`}
+                      value={String(displaySec).padStart(2, '0')}
+                      onChange={(e) => handleManualTimeChange('sec', e.target.value)}
+                      disabled={isRunning}
+                      maxLength={2}
+                    />
                     <button className="arrow-btn" onClick={() => handleArrowAdjust('sec', -1)} disabled={isRunning}>▼</button>
                   </div>
                 </div>
@@ -221,9 +241,21 @@ function TimerPage() {
             <div className="sidebar-section">
               <div className="section-title">⏱️ 시간 설정</div>
               <div className="preset-grid">
-                {[1, 2, 3, 5, 10, 20, 30, 40, 50].map(m => (
-                  <button key={m} className="preset-btn" onClick={() => adjustTime('set', 'min', m)} disabled={isRunning}>
-                    {m}분
+                {[
+                  { l: '10초', m: 0, s: 10 },
+                  { l: '30초', m: 0, s: 30 },
+                  { l: '1분', m: 1, s: 0 },
+                  { l: '1분30초', m: 1, s: 30 },
+                  { l: '2분', m: 2, s: 0 },
+                  { l: '3분', m: 3, s: 0 },
+                  { l: '5분', m: 5, s: 0 },
+                  { l: '10분', m: 10, s: 0 },
+                  { l: '20분', m: 20, s: 0 },
+                  { l: '30분', m: 30, s: 0 },
+                  { l: '50분', m: 50, s: 0 }
+                ].map(p => (
+                  <button key={p.l} className="preset-btn" onClick={() => { setMinutes(p.m); setSeconds(p.s); }} disabled={isRunning}>
+                    {p.l}
                   </button>
                 ))}
               </div>
@@ -233,14 +265,28 @@ function TimerPage() {
             <div className="sidebar-section">
               <div className="section-title">➕ 시간 증감</div>
               <div className="adjust-grid">
-                {[1, 5, 10].map(m => (
-                  <button key={m} className="adjust-btn plus" onClick={() => adjustTime('add', 'min', m)}>
-                    <span>+{m}분</span>
+                {[
+                  { l: '+1초', u: 'sec', a: 1 },
+                  { l: '+10초', u: 'sec', a: 10 },
+                  { l: '+30초', u: 'sec', a: 30 },
+                  { l: '+1분', u: 'min', a: 1 },
+                  { l: '+5분', u: 'min', a: 5 },
+                  { l: '+10분', u: 'min', a: 10 }
+                ].map(p => (
+                  <button key={p.l} className="adjust-btn plus" onClick={() => adjustTime('add', p.u, p.a)}>
+                    <span>{p.l}</span>
                   </button>
                 ))}
-                {[1, 5, 10].map(m => (
-                  <button key={m} className="adjust-btn minus" onClick={() => adjustTime('add', 'min', -m)}>
-                    <span>-{m}분</span>
+                {[
+                  { l: '-1초', u: 'sec', a: -1 },
+                  { l: '-10초', u: 'sec', a: -10 },
+                  { l: '-30초', u: 'sec', a: -30 },
+                  { l: '-1분', u: 'min', a: -1 },
+                  { l: '-5분', u: 'min', a: -5 },
+                  { l: '-10분', u: 'min', a: -10 }
+                ].map(p => (
+                  <button key={p.l} className="adjust-btn minus" onClick={() => adjustTime('add', p.u, p.a)}>
+                    <span>{p.l}</span>
                   </button>
                 ))}
               </div>
