@@ -264,28 +264,48 @@ function ProgressCheckPage() {
         return gradesData[k];
       };
 
+      // [1] 학급/학년 데이터에서 주간 시수(weeklyH)를 안전하게 추출
+      const getWeeklyHFromPlan = (plan) => {
+        const gradesData = plan.grades || {};
+        const k = Object.keys(gradesData).find(key => 
+          String(key) === String(group.val) || 
+          String(key) === String(group.id) || 
+          String(key) === group.name.replace('⭐ ', '') ||
+          String(key) === group.name.replace('학년', '')
+        );
+        const gData = gradesData[k];
+        // 시수가 설정되어 있지 않으면 기본 1회로 간주하거나 0으로 처리
+        return Number(gData?.weeklyH || 0);
+      };
+
       const sortedPlans = [...currentSemesterPlans].sort((a, b) => Number(a.week) - Number(b.week));
       
+      // [2] 기초 차시 계산: 이전 주차들의 모든 주간 시수 합산
+      let baseLessonNum = 1;
+      if (weekInfo.index > 0) {
+        for (let i = 0; i < weekInfo.index; i++) {
+          baseLessonNum += getWeeklyHFromPlan(sortedPlans[i]);
+        }
+      }
+
+      // [3] 활동 내용(Topics) 목록 생성
       const allSemesterTopics = [];
       sortedPlans.forEach(plan => {
-        const gData = getGroupDataFromPlan(plan);
+        const gradesData = plan.grades || {};
+        const k = Object.keys(gradesData).find(key => 
+          String(key) === String(group.val) || 
+          String(key) === String(group.id) || 
+          String(key) === group.name.replace('⭐ ', '') ||
+          String(key) === group.name.replace('학년', '')
+        );
+        const gData = gradesData[k];
         if (gData && gData.topics) {
-          // 주간 시수만큼 주제를 가져옴 (없으면 빈칸)
           const weeklyH = Number(gData.weeklyH || 0);
           for (let i = 0; i < weeklyH; i++) {
             allSemesterTopics.push(gData.topics[i] || '');
           }
         }
       });
-
-      let baseLessonNum = 1;
-      if (weekInfo.index > 0) {
-        // 현재 주차 이전까지의 모든 주간 시수 합산
-        baseLessonNum = sortedPlans.slice(0, weekInfo.index).reduce((acc, p) => {
-          const gData = getGroupDataFromPlan(p);
-          return acc + Number(gData?.weeklyH || 0);
-        }, 1);
-      }
 
       let classesToShow = [];
       if (group.type === 'grade') {
