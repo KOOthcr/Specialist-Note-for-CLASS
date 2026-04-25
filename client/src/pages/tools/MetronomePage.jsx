@@ -23,13 +23,15 @@ function MetronomePage() {
   const [currentBeat, setCurrentBeat] = useState(0);
   const [soundType, setSoundType] = useState('wood'); // wood, beep, drum
   
+  // Tap Tempo state
+  const tapTimes = useRef([]);
+  
   const audioContextRef = useRef(null);
   const timerIDRef = useRef(null);
   const nextNoteTimeRef = useRef(0.0);
   const beatRef = useRef(0);
   const bpmRef = useRef(130);
 
-  // BPM이 변경될 때마다 ref 업데이트 (스케줄러에서 최신 BPM을 참조하기 위함)
   useEffect(() => {
     bpmRef.current = bpm;
   }, [bpm]);
@@ -67,25 +69,21 @@ function MetronomePage() {
   }, [soundType]);
 
   const scheduler = useCallback(() => {
-    const scheduleAheadTime = 0.1; // 100ms 앞을 미리 스케줄링
+    const scheduleAheadTime = 0.1;
     
     while (nextNoteTimeRef.current < audioContextRef.current.currentTime + scheduleAheadTime) {
       const isAccent = beatRef.current === 0;
       playClick(nextNoteTimeRef.current, isAccent);
       
-      // UI 업데이트를 위한 상태 변경 (requestAnimationFrame을 쓰는 것이 더 정확하지만 여기서는 단순화)
       const capturedBeat = beatRef.current;
       setTimeout(() => setCurrentBeat(capturedBeat), (nextNoteTimeRef.current - audioContextRef.current.currentTime) * 1000);
 
-      // 다음 박자 시간 계산
       const secondsPerBeat = 60.0 / bpmRef.current;
       nextNoteTimeRef.current += secondsPerBeat;
-      
-      // 비트 카운트 업데이트
       beatRef.current = (beatRef.current + 1) % beatsPerMeasure;
     }
     
-    timerIDRef.current = setTimeout(scheduler, 25); // 25ms마다 체크
+    timerIDRef.current = setTimeout(scheduler, 25);
   }, [beatsPerMeasure, playClick]);
 
   const startMetronome = () => {
@@ -105,6 +103,25 @@ function MetronomePage() {
     }
   };
 
+  const handleTap = () => {
+    const now = performance.now();
+    tapTimes.current.push(now);
+    
+    if (tapTimes.current.length > 4) {
+      tapTimes.current.shift();
+    }
+    
+    if (tapTimes.current.length > 1) {
+      const intervals = [];
+      for (let i = 1; i < tapTimes.current.length; i++) {
+        intervals.push(tapTimes.current[i] - tapTimes.current[i-1]);
+      }
+      const avgInterval = intervals.reduce((a, b) => a + b) / intervals.length;
+      const newBpm = Math.round(60000 / avgInterval);
+      handleBpmChange(newBpm);
+    }
+  };
+
   useEffect(() => {
     return () => clearTimeout(timerIDRef.current);
   }, []);
@@ -117,7 +134,7 @@ function MetronomePage() {
   return (
     <div className="metronome-container">
       <div className="metronome-main">
-        <div className="display-section">
+        <div className="display-section" onClick={handleTap} style={{ cursor: 'pointer' }} title="여기를 탭하여 BPM을 맞추세요 (Tap Tempo)">
           <div className="beat-indicator">
             {Array.from({ length: beatsPerMeasure }).map((_, i) => (
               <div key={i} className={`beat-dot ${currentBeat === i && isPlaying ? 'active' : ''}`} />
@@ -128,7 +145,7 @@ function MetronomePage() {
             <span className="bpm-decimal">.00</span>
           </div>
           <div className="tempo-info">
-            <span className="tempo-sec">{(60 / bpm).toFixed(3)}sec</span>
+            <span className="tempo-sec">{(60 / bpm).toFixed(3)}s / beat</span>
             <span className="tempo-name">{getTempoName(bpm)}</span>
           </div>
         </div>
@@ -136,29 +153,29 @@ function MetronomePage() {
         <div className="control-section">
           <div className="settings-grid">
             <div className="setting-item">
-              <span className="setting-icon">🔔</span>
-              <span className="setting-label">소리</span>
+              <span className="setting-icon">🔊</span>
+              <span className="setting-label">Sound</span>
               <select className="setting-select" value={soundType} onChange={(e) => setSoundType(e.target.value)}>
-                <option value="wood">Wood Block</option>
-                <option value="beep">Digital Beep</option>
-                <option value="drum">High Snare</option>
+                <option value="wood">Studio Wood</option>
+                <option value="beep">Digital Pure</option>
+                <option value="drum">High Perc</option>
               </select>
             </div>
             <div className="setting-item">
-              <span className="setting-icon">4</span>
-              <span className="setting-label">비트</span>
+              <span className="setting-icon">⏱️</span>
+              <span className="setting-label">Beats</span>
               <select className="setting-select" value={beatsPerMeasure} onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}>
                 {Array.from({ length: 16 }, (_, i) => i + 1).map(num => (
-                  <option key={num} value={num}>{num} 박자</option>
+                  <option key={num} value={num}>{num} Beat</option>
                 ))}
               </select>
             </div>
             <div className="setting-item">
-              <span className="setting-icon">♩</span>
-              <span className="setting-label">패턴</span>
+              <span className="setting-icon">🎵</span>
+              <span className="setting-label">Pattern</span>
               <select className="setting-select">
-                <option>Quarter</option>
-                <option>Eighth</option>
+                <option>Quarter (♩)</option>
+                <option>Eighth (♪)</option>
               </select>
             </div>
           </div>
@@ -175,13 +192,13 @@ function MetronomePage() {
           </div>
 
           <div className="playback-controls">
-            <button className="adj-btn" onClick={() => handleBpmChange(bpm - 5)}>- 5</button>
-            <button className="adj-btn" onClick={() => handleBpmChange(bpm - 1)}>- 1</button>
+            <button className="adj-btn" onClick={() => handleBpmChange(bpm - 5)}>-5</button>
+            <button className="adj-btn" onClick={() => handleBpmChange(bpm - 1)}>-1</button>
             <button className={`play-btn ${isPlaying ? 'playing' : ''}`} onClick={startMetronome}>
-              {isPlaying ? '■' : '▶'}
+              {isPlaying ? '⏹' : '▶'}
             </button>
-            <button className="adj-btn" onClick={() => handleBpmChange(bpm + 1)}>+ 1</button>
-            <button className="adj-btn" onClick={() => handleBpmChange(bpm + 5)}>+ 5</button>
+            <button className="adj-btn" onClick={() => handleBpmChange(bpm + 1)}>+1</button>
+            <button className="adj-btn" onClick={() => handleBpmChange(bpm + 5)}>+5</button>
           </div>
         </div>
       </div>
@@ -194,7 +211,7 @@ function MetronomePage() {
             onClick={() => handleBpmChange(p)}
           >
             <span className="preset-bpm">{p}</span>
-            <span className="preset-sub">4 ♩</span>
+            <span className="preset-sub">♩ Quarter</span>
           </button>
         ))}
       </div>
