@@ -221,6 +221,7 @@ function ProgressCheckPage() {
       const group = groups.find(g => g.id === selectedGroupId);
       if (!group) return;
 
+      const offsetDoc = await getDoc(doc(db, 'users', uid, 'offsets', selectedGroupId));
       const groupOffsets = offsetDoc.exists() ? offsetDoc.data() : {};
       setOffsets(groupOffsets);
 
