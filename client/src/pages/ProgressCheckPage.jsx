@@ -251,28 +251,39 @@ function ProgressCheckPage() {
       const snap = await getDoc(doc(db, 'users', uid, 'progress_check', docId));
       const savedRecords = snap.exists() ? snap.data().records || {} : null;
 
-      const sortedPlans = [...currentSemesterPlans].sort((a, b) => Number(a.week) - Number(b.week));
-      
+      // 시수 매칭 및 기초 차시 계산 로직 강화
       const getGroupDataFromPlan = (plan) => {
         const gradesData = plan.grades || {};
         const k = Object.keys(gradesData).find(k => 
-          String(k) === String(group.val) || String(k) === String(group.id) || String(k) === group.name.replace('⭐ ', '')
+          String(k) === String(group.val) || 
+          String(k) === String(group.id) || 
+          String(k) === group.name.replace('⭐ ', '') ||
+          String(k) === group.name.replace('학년', '')
         );
         return gradesData[k];
       };
 
+      const sortedPlans = [...currentSemesterPlans].sort((a, b) => Number(a.week) - Number(b.week));
+      
       const allSemesterTopics = [];
       sortedPlans.forEach(plan => {
         const gData = getGroupDataFromPlan(plan);
         if (gData && gData.topics) {
+          // 주간 시수만큼 주제를 가져옴 (없으면 빈칸)
           const weeklyH = Number(gData.weeklyH || 0);
-          for (let i = 0; i < weeklyH; i++) allSemesterTopics.push(gData.topics[i] || '');
+          for (let i = 0; i < weeklyH; i++) {
+            allSemesterTopics.push(gData.topics[i] || '');
+          }
         }
       });
 
       let baseLessonNum = 1;
       if (weekInfo.index > 0) {
-        baseLessonNum = sortedPlans.slice(0, weekInfo.index).reduce((acc, p) => acc + (Number(getGroupDataFromPlan(p)?.weeklyH) || 0), 1);
+        // 현재 주차 이전까지의 모든 주간 시수 합산
+        baseLessonNum = sortedPlans.slice(0, weekInfo.index).reduce((acc, p) => {
+          const gData = getGroupDataFromPlan(p);
+          return acc + Number(gData?.weeklyH || 0);
+        }, 1);
       }
 
       let classesToShow = [];

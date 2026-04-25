@@ -1,61 +1,22 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 1. 유저 정보 (교실 검색을 위해 공개 읽기 허용)
+    // 유저 정보 및 하위 데이터 통합 관리
     match /users/{userId} {
+      // 1. 유저 문서 자체에 대한 권한
       allow read: if true; 
       allow write: if request.auth != null && request.auth.uid == userId;
       
-      // 하위 컬렉션들: 학생이 접근해야 하는 경로들
+      // 2. 학생/외부 접근이 필요한 컬렉션 (쓰기 허용 유지)
+      match /students/{id} { allow read, write: if true; }
+      match /accumulated_records/{id} { allow read, write: if true; }
+      match /student_questions/{id} { allow read, write: if true; }
+      match /growth_detail_records/{id} { allow read, write: if true; }
+      match /attendance/{id} { allow read, write: if true; }
       
-      match /students/{studentId} {
-        allow read: if true;
-        allow write: if true; 
-      }
-      
-      match /classes/{classId} {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.uid == userId;
-      }
-      
-      match /clubs/{clubId} {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.uid == userId;
-      }
-
-      match /accumulated_records/{recordId} {
-        allow read, write: if true; 
-      }
-
-      match /student_questions/{questionId} {
-        allow read, write: if true; 
-      }
-
-      match /growth_detail_records/{recordId} {
-        allow read, write: if true; 
-      }
-      
-      match /growth_categories/{catId} {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.uid == userId;
-      }
-
-      match /curriculum/{docId} {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.uid == userId;
-      }
-
-      match /attendance/{docId} {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.uid == userId;
-      }
-
-      match /settings/{docId} {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.uid == userId;
-      }
-
-      match /offsets/{docId} {
+      // 3. 그 외 모든 하위 컬렉션 (선생님 전용 데이터)
+      // classes, clubs, settings, offsets, curriculum, progress_check 등 모든 경로 포함
+      match /{allPaths=**} {
         allow read: if true;
         allow write: if request.auth != null && request.auth.uid == userId;
       }
