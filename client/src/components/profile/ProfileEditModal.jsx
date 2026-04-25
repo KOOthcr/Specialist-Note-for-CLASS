@@ -163,11 +163,11 @@ function ProfileEditModal({ isOpen, onClose, onUpdate }) {
               className="auth-input" 
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
-              placeholder="예) 열정, 행복, 체육관"
+              placeholder="예) 열정, 행복"
               style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', marginTop: '4px' }}
             />
             <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '4px' }}>
-              💡 '열정', '도전', '행복'과 같은 멋진 이름을 추천합니다!
+              💡 '열정', '도전', '행복'과 같은 단어 이름을 추천합니다!
             </p>
           </div>
 
