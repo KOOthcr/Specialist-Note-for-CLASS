@@ -366,9 +366,9 @@ function ProgressCheckPage() {
             if (savedRecords && savedRecords[rowKey]) {
               const saved = savedRecords[rowKey];
               finalData.push({
-                ...saved, classNum: cls.classNum, periodIdx: pIdx, baseCalcPeriod: baseLessonNum + lessonsBeforeThis,
-                period: (!saved.lesson_count || isNaN(saved.period)) ? `${pIdx}교시` : saved.period,
-                lesson_count: saved.lesson_count || String(finalPeriod),
+                ...saved, classNum: cls.classNum, periodIdx: pIdx, 
+                baseCalcPeriod: baseLessonNum + lessonsBeforeThis,
+                lesson_count: String(finalPeriod),
                 isTodayLesson: saved.isTodayLesson !== undefined ? saved.isTodayLesson : true
               });
             } else {
@@ -397,7 +397,7 @@ function ProgressCheckPage() {
             const saved = savedRecords[rowKey];
             finalData.push({
               ...saved, classNum: cls.classNum, periodIdx: null, baseCalcPeriod: baseLessonNum + lessonsInWeek,
-              period: '-', lesson_count: saved.lesson_count || String(finalPeriod),
+              period: '-', lesson_count: String(finalPeriod),
               isTodayLesson: saved.isTodayLesson !== undefined ? saved.isTodayLesson : false
             });
           } else {
