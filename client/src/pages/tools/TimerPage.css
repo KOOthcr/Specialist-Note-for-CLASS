@@ -191,7 +191,7 @@ input.number-box:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f8fafc;
+  background: white;
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid #e2e8f0;
@@ -217,7 +217,7 @@ input.number-box:disabled {
 .preset-btn {
   padding: 10px 0;
   border: 1px solid #e2e8f0;
-  background: #f8fafc;
+  background: white;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
