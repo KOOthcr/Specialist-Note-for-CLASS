@@ -594,10 +594,17 @@ function ProgressRecordPage() {
               </div>
 
               <div className="col-small-box weekly-hours-col">
-                <input type="number" className="row-input center bold" value={h} onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} />
+                <input 
+                  type="number" 
+                  className="row-input weekly-h-input" 
+                  value={h} 
+                  onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} 
+                />
               </div>
 
-              <div className="col-small-box acc-highlight"><div className="acc-value">{gData?.accH || 0}</div></div>
+              <div className="col-small-box acc-highlight">
+                <div className="acc-value">{gData?.accH || 0}</div>
+              </div>
             </div>
           );
         })}
