@@ -250,9 +250,7 @@ function TimerPage() {
                   { l: '3분', m: 3, s: 0 },
                   { l: '5분', m: 5, s: 0 },
                   { l: '10분', m: 10, s: 0 },
-                  { l: '20분', m: 20, s: 0 },
-                  { l: '30분', m: 30, s: 0 },
-                  { l: '50분', m: 50, s: 0 }
+                  { l: '20분', m: 20, s: 0 }
                 ].map(p => (
                   <button key={p.l} className="preset-btn" onClick={() => { setMinutes(p.m); setSeconds(p.s); }} disabled={isRunning}>
                     {p.l}
