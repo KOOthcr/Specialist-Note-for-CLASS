@@ -148,13 +148,43 @@
   accent-color: var(--color-primary);
 }
 
-.stop-btn {
-  background-color: var(--color-danger);
+.start-btn {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   color: white;
-  padding: 16px;
-  width: 100%;
+  box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3);
+}
+
+.start-btn:hover {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+}
+
+.stop-btn {
+  background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(30, 41, 59, 0.3);
 }
 
 .stop-btn:hover {
-  background-color: #dc2626;
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(30, 41, 59, 0.4);
+}
+
+.control-btn {
+  width: 100%;
+  padding: 16px 32px;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: block;
+  margin-top: 10px;
+}
+
+.control-btn:active {
+  transform: translateY(0);
 }
