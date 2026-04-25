@@ -166,8 +166,21 @@
   box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
 }
 
-.btn-mini-green:hover {
-  background-color: #1b5e20;
+.btn-mini-red {
+  padding: 12px 24px;
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(211, 47, 47, 0.2);
+}
+
+.btn-mini-green:hover, .btn-mini-red:hover {
+  filter: brightness(1.1);
   transform: translateY(-1px);
 }
 
@@ -207,11 +220,12 @@
 }
 
 /* 📸 열 비율 설정 (차시 컬럼 분리형) */
-.col-week-header, .col-week-box { flex: 0 0 45px; border-right: 1px solid #e2e8f0; }
-.col-period-header, .col-period-box { flex: 0 0 280px; border-right: 1px solid #e2e8f0; }
-.col-lesson-header, .col-lesson-box { flex: 0 0 55px; border-right: 1px solid #e2e8f0; }
+.col-week-header, .col-week-box { flex: 0 0 50px; border-right: 1px solid #e2e8f0; }
+.col-period-header, .col-period-box { flex: 0 0 250px; border-right: 1px solid #e2e8f0; }
+.col-lesson-header, .col-lesson-box { flex: 0 0 60px; border-right: 1px solid #e2e8f0; }
+.col-small-header, .col-small-box { flex: 0 0 75px; border-right: 1px solid #e2e8f0; }
+.col-small-box-inner { width: 45px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #94a3b8; border-right: 1px solid #f1f5f9; background: #fafafa; }
 .col-topic-header, .col-lesson-topic-container { flex: 1; display: flex; flex-direction: column; }
-.col-small-header, .col-small-box { flex: 0 0 65px; border-right: 1px solid #e2e8f0; }
 .col-small-box:last-child { border-right: none; }
 
 /* 📸 박스 내부 중앙 정렬 강화 */
@@ -402,16 +416,34 @@
 
 /* 누계 강조 */
 .acc-highlight {
-  background-color: #f1f5f9;
+  background-color: #f0fdf4 !important;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.weekly-hours-col {
+  background-color: #f8faff !important;
+  border-left: 1px solid #e2e8f0;
+}
+
+.weekly-hours-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.weekly-hours-input-wrapper .unit-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 700;
+}
+
 .acc-value {
   font-size: 16px;
   font-weight: 800;
-  color: #0f172a;
+  color: #166534;
 }
 
 .no-hours-notice {

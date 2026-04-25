@@ -163,6 +163,25 @@ function ProgressRecordPage() {
   };
 
   // 기간 자동 생성 로직 (현재 학년만 적용)
+  // 현재 학년/학기 전체 삭제
+  const clearAllPlans = () => {
+    if (!currentGroup) return;
+    showConfirm(`[${currentGroup.name}]의 ${selectedSemester}학기 모든 진도 데이터를 삭제하고 초기화하시겠습니까?`, () => {
+      const emptyPlans = currentPlans.map(plan => {
+        const updatedGrades = { ...plan.grades };
+        updatedGrades[currentGroup.val] = {
+          topics: [],
+          weeklyH: 0,
+          accH: 0,
+          period: updatedGrades[currentGroup.val]?.period || ''
+        };
+        return { ...plan, grades: updatedGrades };
+      });
+      setPlans(emptyPlans);
+      showAlert('모든 데이터가 초기화되었습니다.', '삭제 완료');
+    }, '전체 데이터 삭제');
+  };
+
   const autoGeneratePeriods = () => {
     if (!currentGroup) return;
     const year = new Date().getFullYear();
@@ -496,6 +515,7 @@ function ProgressRecordPage() {
             onChange={(e) => setDefaultHours(e.target.value)}
           />
           <button className="btn-mini-green" onClick={applyDefaultHours}>모든 주차에 적용</button>
+          <button className="btn-mini-red" onClick={clearAllPlans} style={{ marginLeft: '10px', background: '#d32f2f' }}>🗑️ 전체 삭제</button>
         </div>
         <div className="batch-action-item" style={{ marginLeft: '20px' }}>
           <button className="btn-outline-green" onClick={autoGeneratePeriods} style={{ padding: '10px 20px', fontSize: '14px' }}>
@@ -510,11 +530,11 @@ function ProgressRecordPage() {
           <div className="col-week-header">주</div>
           <div className="col-period-header">기 간</div>
           <div className="col-lesson-header">차시</div>
+          <div className="col-small-header">시수</div>
           <div className="col-topic-header">
             <div className="topic-title">{currentGroup?.name} {selectedSemester}학기 진도 계획</div>
             <div className="topic-subtitle">학습 주제 및 내용 (시수별 개별 입력)</div>
           </div>
-          <div className="col-small-header">시수</div>
           <div className="col-small-header">누계</div>
         </div>
 
@@ -551,21 +571,33 @@ function ProgressRecordPage() {
                   </div>
                 </div>
               </div>
+              
               <div className="col-lesson-topic-container">
-                {Array.from({ length: h }).map((_, i) => (
+                {Array.from({ length: Math.max(1, h) }).map((_, i) => (
                   <div key={i} className="lesson-row-item">
-                    <div className="col-lesson-box"><div className="lesson-badge-simple">{startLessonNum + i}</div></div>
+                    <div className="col-lesson-box"><div className="lesson-badge-simple">{h > 0 ? startLessonNum + i : '-'}</div></div>
+                    <div className="col-small-box-inner">{h > 0 ? '1' : '-'}</div>
                     <div className="col-topic-box-sub">
-                      <textarea className="lesson-textarea" value={gData.topics?.[i] || ''} onChange={(e) => updateTopic(wIdx, currentGroup.val, i, e.target.value)} placeholder={`${startLessonNum + i}차시 주제 입력...`} />
-                      <button className="btn-delete-topic" onClick={() => removeTopic(wIdx, currentGroup.val, i)} title="이 차시 삭제">✕</button>
+                      {h > 0 ? (
+                        <>
+                          <textarea className="lesson-textarea" value={gData.topics?.[i] || ''} onChange={(e) => updateTopic(wIdx, currentGroup.val, i, e.target.value)} placeholder={`${startLessonNum + i}차시 주제 입력...`} />
+                          <button className="btn-delete-topic" onClick={() => removeTopic(wIdx, currentGroup.val, i)} title="이 차시 삭제">✕</button>
+                        </>
+                      ) : (
+                        <div className="no-hours-notice">시수를 입력하면 주제 입력칸이 나타납니다.</div>
+                      )}
                     </div>
                   </div>
                 ))}
-                {h === 0 && <div className="no-hours-notice">시수를 입력하면 주제 입력칸이 나타납니다.</div>}
               </div>
-              <div className="col-small-box">
-                <input type="number" className="row-input center" value={h} onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} />
+
+              <div className="col-small-box weekly-hours-col">
+                <div className="weekly-hours-input-wrapper">
+                  <input type="number" className="row-input center bold" value={h} onChange={(e) => updateCell(wIdx, 'weeklyH', e.target.value, currentGroup.val)} />
+                  <span className="unit-label">시간</span>
+                </div>
               </div>
+
               <div className="col-small-box acc-highlight"><div className="acc-value">{gData?.accH || 0}</div></div>
             </div>
           );
