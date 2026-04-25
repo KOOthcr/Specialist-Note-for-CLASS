@@ -282,13 +282,30 @@ function ProgressCheckPage() {
 
       const sortedPlans = [...currentSemesterPlans].sort((a, b) => Number(a.week) - Number(b.week));
       
-      // [2] 기초 차시 계산: 이전 주차들의 모든 주간 시수 합산
-      let baseLessonNum = 1;
-      if (weekInfo.index > 0) {
-        for (let i = 0; i < weekInfo.index; i++) {
-          baseLessonNum += getWeeklyHFromPlan(sortedPlans[i]);
-        }
-      }
+      // [2] 기초 차시 계산용 헬퍼 함수 정의
+      const getActualWeeklyH = (classId) => {
+        let count = 0;
+        if (!Array.isArray(timetable)) return 0;
+        timetable.forEach(row => {
+          if (Array.isArray(row)) {
+            row.forEach(cell => {
+              if (String(cell) === String(classId)) count++;
+            });
+          }
+        });
+        return count;
+      };
+
+      const getWeeklyHFromPlanForClass = (plan, classId) => {
+        const gradesData = plan.grades || {};
+        const k = Object.keys(gradesData).find(key => 
+          String(key) === String(group.val) || String(key) === String(group.id) || 
+          String(key) === group.name.replace('⭐ ', '') || String(key) === group.name.replace('학년', '')
+        );
+        const gData = gradesData[k];
+        if (!gData || Number(gData.weeklyH || 0) === 0) return 0;
+        return getActualWeeklyH(classId);
+      };
 
       const topics = [];
       sortedPlans.forEach(plan => {
@@ -318,6 +335,14 @@ function ProgressCheckPage() {
 
       const finalData = [];
       classesToShow.forEach(cls => {
+        // [2-1] 해당 학급의 이번 주차 시작 차시(baseLessonNum) 계산
+        let baseLessonNum = 1;
+        if (weekInfo.index > 0) {
+          for (let i = 0; i < weekInfo.index; i++) {
+            baseLessonNum += getWeeklyHFromPlanForClass(sortedPlans[i], cls.id);
+          }
+        }
+
         const periodsToday = [];
         if (isWeekday && Array.isArray(timetable)) {
           for (let p = 0; p < timetable.length; p++) {
@@ -514,6 +539,20 @@ function ProgressCheckPage() {
         const classKey = String(cls.classNum);
         classDataMap[classKey] = [];
 
+        // 실제 수업 횟수 계산용 헬퍼 (엑셀용)
+        const getActualWeeklyH = (classId) => {
+          let count = 0;
+          if (!Array.isArray(timetable)) return 0;
+          timetable.forEach(row => {
+            if (Array.isArray(row)) {
+              row.forEach(cell => {
+                if (String(cell) === String(classId)) count++;
+              });
+            }
+          });
+          return count;
+        };
+
         sortedPlans.forEach(plan => {
           const gData = (plan.grades || {})[Object.keys(plan.grades || {}).find(k => k === String(group.val) || k === String(group.id) || k === group.name.replace('⭐ ', ''))];
           if (!gData) return;
@@ -539,21 +578,24 @@ function ProgressCheckPage() {
             // 시간표 대조 (해당 요일에 이 반 수업이 있는가?)
             timetable.forEach((row, pIdx) => {
               if (String(row[dayIdx]) === String(cls.id)) {
+                const actualWeeklyH = getActualWeeklyH(cls.id);
+                const planWeeklyH = Number(gData.weeklyH || 0);
+
                 const rowKey = group.type === 'grade' ? `${cls.classNum}_p${pIdx}` : `club_p${pIdx}`;
                 const finalLessonNum = cumulativeLessonCount + (groupOffsets[cls.classNum] || 0);
-                const plannedTopic = weeklyTopics[cumulativeLessonCount - 1 - (cumulativeLessonCount - 1)] || weeklyTopics[0] || ''; // 주차별로 보강 필요하나 일단 보수적으로
                 
                 // Firestore 기록이 있으면 사용, 없으면 계획표 기반 생성
                 const record = savedRecords[rowKey];
                 if (record && record.isTodayLesson !== false) {
                   classDataMap[classKey].push({
                     date: dateStr, period: record.period || `${pIdx}교시`, lesson_count: record.lesson_count || finalLessonNum,
-                    activity: record.activity || plannedTopic, leader: record.leader || '', note: record.note || ''
+                    activity: record.activity || (weeklyTopics[cumulativeLessonCount - 1] || weeklyTopics[0] || ''), 
+                    leader: record.leader || '', note: record.note || ''
                   });
                 } else if (!record) {
                   classDataMap[classKey].push({
                     date: dateStr, period: `${pIdx}교시`, lesson_count: finalLessonNum,
-                    activity: gData.topics[cumulativeLessonCount - (cumulativeLessonCount - (cumulativeLessonCount % gData.weeklyH || 1)) - 1] || gData.topics[0] || '',
+                    activity: weeklyTopics[cumulativeLessonCount - 1] || weeklyTopics[0] || '',
                     leader: '', note: '자동 생성'
                   });
                 }
