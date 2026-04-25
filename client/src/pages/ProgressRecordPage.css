@@ -227,19 +227,19 @@
 .col-small-box:last-child { border-right: none; }
 
 /* 주차 컨트롤 박스 (왼쪽) */
-.week-control-box {
+.col-week-box {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 8px;
   background-color: #f8fafc;
+  padding: 20px 5px;
 }
 
 .week-num-label {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 900;
   color: #1e293b;
+  text-align: center;
 }
 
 .weekly-h-setter {

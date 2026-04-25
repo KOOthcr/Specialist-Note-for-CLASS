@@ -549,7 +549,7 @@ function ProgressRecordPage() {
           return (
             <div key={wIdx} className="plan-week-row">
               <div className="col-week-box">
-                <div className="week-num-label">第 {plan.week} 주</div>
+                <div className="week-num-label">{plan.week}주</div>
               </div>
               
               <div className="col-period-box">
