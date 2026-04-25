@@ -54,7 +54,14 @@ function ClassHoursPage() {
         const timetableSnap = await getDoc(timetableRef);
         
         if (timetableSnap.exists()) {
-          setTimetable(timetableSnap.data().data || Array(8).fill(null).map(() => Array(5).fill('none')));
+          const rawData = timetableSnap.data().data;
+          if (rawData && !Array.isArray(rawData)) {
+            // 객체 타입을 배열로 복구
+            const recovered = Array(8).fill(null).map((_, i) => rawData[i] || Array(5).fill('none'));
+            setTimetable(recovered);
+          } else {
+            setTimetable(rawData || Array(8).fill(null).map(() => Array(5).fill('none')));
+          }
         } else {
           // 마이그레이션 백업
           const saved = localStorage.getItem('master_timetable');
@@ -82,11 +89,17 @@ function ClassHoursPage() {
     if (!currentUser) return showAlert('로그인이 필요합니다.', '오류', 'error');
     
     try {
+      // Firestore는 중첩 배열(Array inside Array) 저장을 지원하지 않으므로 객체로 변환
+      const formattedData = {};
+      timetable.forEach((row, idx) => {
+        formattedData[idx] = row;
+      });
+
       await setDoc(doc(db, 'users', currentUser.uid, 'settings', 'timetable'), {
-        data: timetable,
+        data: formattedData,
         updatedAt: new Date().toISOString()
       });
-      // 로컬스토리지에도 백업 (오프라인 대비)
+      
       localStorage.setItem('master_timetable', JSON.stringify(timetable));
       showAlert('기초시간표가 클라우드에 안전하게 저장되었습니다.', '저장 완료');
     } catch (e) {

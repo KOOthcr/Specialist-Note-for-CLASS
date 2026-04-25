@@ -229,7 +229,13 @@ function ProgressCheckPage() {
       const timetableSnap = await getDoc(timetableRef);
       let timetable = [];
       if (timetableSnap.exists()) {
-        timetable = timetableSnap.data().data || [];
+        const rawData = timetableSnap.data().data;
+        if (rawData && !Array.isArray(rawData)) {
+          // 객체 타입을 배열로 복구
+          timetable = Array(8).fill(null).map((_, i) => rawData[i] || Array(5).fill('none'));
+        } else {
+          timetable = rawData || [];
+        }
       } else {
         const savedTimetable = localStorage.getItem('master_timetable');
         timetable = savedTimetable ? JSON.parse(savedTimetable) : [];
