@@ -160,10 +160,9 @@ function MetronomePage() {
               <span className="setting-icon">4</span>
               <span className="setting-label">비트</span>
               <select className="setting-select" value={beatsPerMeasure} onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}>
-                <option value="2">2/4</option>
-                <option value="3">3/4</option>
-                <option value="4">4/4</option>
-                <option value="6">6/8</option>
+                {Array.from({ length: 16 }, (_, i) => i + 1).map(num => (
+                  <option key={num} value={num}>{num} 박자</option>
+                ))}
               </select>
             </div>
             <div className="setting-item">

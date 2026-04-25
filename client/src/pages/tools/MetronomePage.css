@@ -60,13 +60,15 @@
 
 .beat-indicator {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 20px;
+  justify-content: center;
 }
 
 .beat-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background-color: #475569;
   border-radius: 50%;
   transition: all 0.1s;
