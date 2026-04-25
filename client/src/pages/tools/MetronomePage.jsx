@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './MetronomePage.css';
 
 const TEMPOS = [
-  { name: 'Grave', min: 0, max: 40 },
-  { name: 'Largo', min: 40, max: 45 },
-  { name: 'Larghetto', min: 45, max: 50 },
-  { name: 'Adagio', min: 50, max: 55 },
-  { name: 'Andante', min: 55, max: 65 },
-  { name: 'Moderato', min: 65, max: 80 },
-  { name: 'Allegro', min: 80, max: 120 },
-  { name: 'Vivace', min: 120, max: 150 },
-  { name: 'Presto', min: 150, max: 200 },
-  { name: 'Prestissimo', min: 200, max: 300 },
+  { name: '매우 느리게 (Grave)', min: 0, max: 40 },
+  { name: '느리게 (Largo)', min: 40, max: 45 },
+  { name: '조금 느리게 (Larghetto)', min: 45, max: 50 },
+  { name: '매우 천천히 (Adagio)', min: 50, max: 55 },
+  { name: '천천히 (Andante)', min: 55, max: 65 },
+  { name: '보통 빠르기 (Moderato)', min: 65, max: 80 },
+  { name: '빠르게 (Allegro)', min: 80, max: 120 },
+  { name: '아주 빠르게 (Vivace)', min: 120, max: 150 },
+  { name: '매우 빠르게 (Presto)', min: 150, max: 200 },
+  { name: '가장 빠르게 (Prestissimo)', min: 200, max: 300 },
 ];
 
 const PRESETS = [80, 90, 100, 110, 120, 130, 140, 150, 160, 170];
@@ -148,25 +148,25 @@ function MetronomePage() {
           </div>
           <div className="tempo-info">
             <span className="tempo-name">{getTempoName(bpm)}</span>
-            <span className="tempo-sec">{(60 / bpm).toFixed(3)} SEC/BEAT</span>
+            <span className="tempo-sec">{(60 / bpm).toFixed(3)} 초 / 박자</span>
           </div>
         </div>
 
         <div className="control-section">
           <div className="settings-grid">
             <div className="setting-item">
-              <span className="setting-label">SOUND</span>
+              <span className="setting-label">소리 선택</span>
               <select className="setting-select" value={soundType} onChange={(e) => setSoundType(e.target.value)}>
-                <option value="wood">WOOD BLOCK</option>
-                <option value="beep">DIGITAL BEEP</option>
-                <option value="drum">HIGH SNARE</option>
+                <option value="wood">우드 블록</option>
+                <option value="beep">디지털 비프</option>
+                <option value="drum">스네어 드럼</option>
               </select>
             </div>
             <div className="setting-item">
-              <span className="setting-label">BEATS</span>
+              <span className="setting-label">박자 설정</span>
               <select className="setting-select" value={beatsPerMeasure} onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}>
                 {Array.from({ length: 16 }, (_, i) => i + 1).map(num => (
-                  <option key={num} value={num}>{num} BEATS</option>
+                  <option key={num} value={num}>{num} 박자</option>
                 ))}
               </select>
             </div>
@@ -190,7 +190,7 @@ function MetronomePage() {
             </div>
             
             <button className={`play-btn ${isPlaying ? 'playing' : ''}`} onClick={startMetronome}>
-              {isPlaying ? 'STOP' : 'START'}
+              {isPlaying ? '정지' : '시작'}
             </button>
 
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -204,7 +204,7 @@ function MetronomePage() {
             style={{ width: '100%', marginTop: '20px', background: 'rgba(34, 211, 238, 0.1)', color: '#22d3ee', border: '1px solid rgba(34, 211, 238, 0.3)' }}
             onClick={handleTap}
           >
-            TAP TEMPO
+            탭 템포 (Tap Tempo)
           </button>
         </div>
       </div>
@@ -217,7 +217,7 @@ function MetronomePage() {
             onClick={() => handleBpmChange(p)}
           >
             <span className="preset-bpm">{p}</span>
-            <span className="preset-sub">4 BEATS</span>
+            <span className="preset-sub">4박자</span>
           </button>
         ))}
       </div>
