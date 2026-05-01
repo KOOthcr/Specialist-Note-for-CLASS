@@ -39,7 +39,8 @@ function StudentModal({ isOpen, student, onSave, onClose, clubs = [], initialDat
         club: ''
       });
     }
-  }, [student, initialData, isOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [student, isOpen]);
 
   if (!isOpen) return null;
 
