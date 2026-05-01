@@ -116,10 +116,11 @@ function AllStudentListPage() {
     <div className="student-dashboard">
       <StudentListHeader 
         title="전체 학생 명단 관리"
+        currentUser={currentUser}
+        fetchStudents={fetchStudents}
         onOpenModal={() => handleOpenModal(null)}
         onOpenClubModal={() => setIsClubModalOpen(true)}
         clubs={clubs}
-        onRefresh={() => fetchStudents(currentUser?.uid)}
         onExcelExport={() => exportAllStudentsToExcel(students, showAlert)}
       />
 
