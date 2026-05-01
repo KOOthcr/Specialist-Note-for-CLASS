@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { utils, write, read } from 'xlsx';
-import { db } from '../../firebase/config';
+import { auth, db } from '../../firebase/config';
 import { collection, doc, writeBatch, getDocs } from 'firebase/firestore';
 import { useModal } from '../common/GlobalModal';
 
@@ -55,7 +55,8 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
 
   // 엑셀 파일 업로드 처리 (전체 학생용)
   const handleStudentExcelUpload = async (e) => {
-    if (!currentUser) {
+    const user = currentUser || auth.currentUser;
+    if (!user) {
       showAlert("로그인이 필요합니다.", "권한 오류", "error");
       return;
     }
@@ -96,7 +97,7 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
         showConfirm(`총 ${allStudents.length}명의 학생 데이터를 일괄 등록하시겠습니까?`, async () => {
           try {
             const batch = writeBatch(db);
-            const studentsRef = collection(db, 'users', currentUser.uid, 'students');
+            const studentsRef = collection(db, 'users', user.uid, 'students');
             
             allStudents.forEach(student => {
               const newDocRef = doc(studentsRef);
@@ -105,7 +106,7 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
             
             await batch.commit();
             showAlert("일괄 등록이 성공적으로 완료되었습니다.", "등록 완료");
-            if (fetchStudents) fetchStudents(currentUser.uid);
+            if (fetchStudents) fetchStudents(user.uid);
           } catch (error) {
             console.error("Bulk upload error: ", error);
             showAlert("일괄 등록 중 오류가 발생했습니다.", "오류", "error");
@@ -122,7 +123,8 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
 
   // 엑셀 파일 업로드 처리 (동아리용)
   const handleClubExcelUpload = async (e) => {
-    if (!currentUser) {
+    const user = currentUser || auth.currentUser;
+    if (!user) {
       showAlert("로그인이 필요합니다.", "권한 오류", "error");
       return;
     }
@@ -159,7 +161,7 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
         }
 
         showConfirm(`${clubData.length}명의 동아리 정보를 업데이트하시겠습니까?`, async () => {
-          const studentsRef = collection(db, 'users', currentUser.uid, 'students');
+          const studentsRef = collection(db, 'users', user.uid, 'students');
           const snapshot = await getDocs(studentsRef);
           const existingStudents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
@@ -174,7 +176,7 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
               s.name === item.name
             );
             if (target) {
-              const docRef = doc(db, 'users', currentUser.uid, 'students', target.id);
+              const docRef = doc(db, 'users', user.uid, 'students', target.id);
               batch.update(docRef, { club: item.clubName, updated_at: new Date().toISOString() });
               updatedCount++;
             }
@@ -183,7 +185,7 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
           if (updatedCount > 0) {
             await batch.commit();
             showAlert(`${updatedCount}명의 정보가 업데이트되었습니다.`, "업데이트 완료");
-            if (fetchStudents) fetchStudents(currentUser.uid);
+            if (fetchStudents) fetchStudents(user.uid);
           } else {
             showAlert("일치하는 학생이 없습니다.", "데이터 불일치", "error");
           }
