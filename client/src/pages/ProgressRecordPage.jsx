@@ -424,6 +424,25 @@ function ProgressRecordPage() {
     reader.readAsBinaryString(file);
   };
 
+  const removeWeek = (wIdx) => {
+    showConfirm(`${currentPlans[wIdx].week}주차를 삭제하시겠습니까? 이후 주차들의 번호가 하나씩 당겨집니다.`, () => {
+      let newPlans = [...currentPlans];
+      newPlans.splice(wIdx, 1);
+      
+      newPlans = newPlans.map((plan, index) => ({
+        ...plan,
+        week: index + 1
+      }));
+      
+      if (currentGroup) {
+        newPlans = recalculateAccHours(newPlans, currentGroup.val);
+      }
+      
+      setPlans(newPlans);
+      showAlert('해당 주차가 성공적으로 삭제되었습니다.', '삭제 완료');
+    }, '주차 삭제 확인');
+  };
+
   const addWeek = () => {
     const lastPlan = currentPlans.length > 0 ? currentPlans[currentPlans.length - 1] : null;
     const nextWeek = lastPlan ? Number(lastPlan.week) + 1 : 1;
@@ -549,8 +568,16 @@ function ProgressRecordPage() {
 
           return (
             <div key={wIdx} className="plan-week-row">
-              <div className="col-week-box">
+              <div className="col-week-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div className="week-num-label">{plan.week}주</div>
+                <button 
+                  className="btn-delete-week no-print" 
+                  onClick={() => removeWeek(wIdx)}
+                  title="이 주차 삭제"
+                  style={{ marginTop: '4px', fontSize: '11px', padding: '2px 4px', color: '#ff4d4f', background: '#fff1f0', border: '1px solid #ffa39e', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  주 삭제
+                </button>
               </div>
               
               <div className="col-period-box">
