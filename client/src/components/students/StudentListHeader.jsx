@@ -96,16 +96,45 @@ function StudentListHeader({ title, currentUser, fetchStudents, onOpenModal, onO
 
         showConfirm(`총 ${allStudents.length}명의 학생 데이터를 일괄 등록하시겠습니까?`, async () => {
           try {
+            // 기존 학급 목록 가져오기
+            const classesRef = collection(db, 'users', user.uid, 'classes');
+            const classSnap = await getDocs(classesRef);
+            const existingClasses = new Set(classSnap.docs.map(d => {
+              const data = d.data();
+              return `${data.grade}-${data.class_number}`;
+            }));
+
+            // 추가해야 할 고유 학급 추출
+            const uniqueClasses = new Map();
+            allStudents.forEach(student => {
+              const key = `${student.grade}-${student.class_number}`;
+              if (!existingClasses.has(key) && !uniqueClasses.has(key)) {
+                uniqueClasses.set(key, {
+                  grade: student.grade,
+                  class_number: student.class_number,
+                  leader: '',
+                  created_at: new Date().toISOString()
+                });
+              }
+            });
+
             const batch = writeBatch(db);
             const studentsRef = collection(db, 'users', user.uid, 'students');
             
+            // 학생 데이터 일괄 추가
             allStudents.forEach(student => {
               const newDocRef = doc(studentsRef);
               batch.set(newDocRef, student);
             });
+
+            // 누락된 학급 데이터 일괄 추가
+            uniqueClasses.forEach(classData => {
+              const newClassRef = doc(classesRef);
+              batch.set(newClassRef, classData);
+            });
             
             await batch.commit();
-            showAlert("일괄 등록이 성공적으로 완료되었습니다.", "등록 완료");
+            showAlert(`총 ${allStudents.length}명의 학생과 ${uniqueClasses.size}개의 학급이 성공적으로 등록되었습니다.`, "등록 완료");
             if (fetchStudents) fetchStudents(user.uid);
           } catch (error) {
             console.error("Bulk upload error: ", error);
