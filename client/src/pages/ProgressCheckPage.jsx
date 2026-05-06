@@ -61,30 +61,78 @@ function ProgressCheckPage() {
       setGroups(allGroups);
       if (allGroups.length > 0) setSelectedGroupId(allGroups[0].id);
 
-      let planRef = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v2');
-      let planSnap = await getDoc(planRef);
-      if (!planSnap.exists()) {
-        const oldRef = doc(db, 'users', uid, 'curriculum', 'annual_plans');
-        const oldSnap = await getDoc(oldRef);
-        if (oldSnap.exists()) planSnap = oldSnap;
-      }
+      const emptyPlanV3 = () => {
+        const base = {};
+        allGroups.forEach(g => {
+          base[g.val] = Array.from({ length: 20 }, (_, i) => ({
+            week: i + 1, period: '', topics: [], weeklyH: 0, accH: 0
+          }));
+        });
+        return base;
+      };
 
-      if (planSnap && planSnap.exists()) {
-        const data = planSnap.data();
-        if (data.semester1 || data.semester2) {
-          setSemester1Plans(data.semester1 || []);
-          setSemester2Plans(data.semester2 || []);
-        } else if (data.plans) {
-          setSemester1Plans(data.plans);
-          setSemester2Plans([]);
+      const migrateToV3 = (plansArray) => {
+        if (!plansArray) return emptyPlanV3();
+        const base = emptyPlanV3();
+        allGroups.forEach(g => {
+          base[g.val] = plansArray.map((p, idx) => {
+            const gData = p.grades && p.grades[g.val] ? p.grades[g.val] : { topics: [], weeklyH: 0, accH: 0, period: p.period || '' };
+            return {
+              week: idx + 1,
+              period: gData.period || '',
+              topics: gData.topics || [],
+              weeklyH: gData.weeklyH || 0,
+              accH: gData.accH || 0
+            };
+          });
+        });
+        return base;
+      };
+
+      let v3Ref = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v3');
+      let v3Snap = await getDoc(v3Ref);
+
+      if (v3Snap.exists()) {
+        const data = v3Snap.data();
+        setSemester1Plans(data.semester1 || emptyPlanV3());
+        setSemester2Plans(data.semester2 || emptyPlanV3());
+      } else {
+        let v2Ref = doc(db, 'users', uid, 'curriculum', 'annual_plans_dynamic_v2');
+        let v2Snap = await getDoc(v2Ref);
+        if (v2Snap.exists()) {
+          const data = v2Snap.data();
+          setSemester1Plans(migrateToV3(data.semester1));
+          setSemester2Plans(migrateToV3(data.semester2));
+        } else {
+          let v1Ref = doc(db, 'users', uid, 'curriculum', 'annual_plans');
+          let v1Snap = await getDoc(v1Ref);
+          if (v1Snap.exists()) {
+             const data = v1Snap.data();
+             if (data.semester1 || data.semester2) {
+               setSemester1Plans(migrateToV3(data.semester1));
+               setSemester2Plans(migrateToV3(data.semester2));
+             } else if (data.plans) {
+               setSemester1Plans(migrateToV3(data.plans));
+               setSemester2Plans(emptyPlanV3());
+             } else {
+               setSemester1Plans(emptyPlanV3());
+               setSemester2Plans(emptyPlanV3());
+             }
+          } else {
+             setSemester1Plans(emptyPlanV3());
+             setSemester2Plans(emptyPlanV3());
+          }
         }
       }
     } catch (e) { console.error(e); }
   };
 
   const currentSemesterPlans = useMemo(() => {
-    return selectedSemester === 1 ? semester1Plans : semester2Plans;
-  }, [selectedSemester, semester1Plans, semester2Plans]);
+    const plansObj = selectedSemester === 1 ? semester1Plans : semester2Plans;
+    const group = groups.find(g => g.id === selectedGroupId);
+    if (!group || !plansObj || !plansObj[group.val]) return [];
+    return plansObj[group.val];
+  }, [selectedSemester, semester1Plans, semester2Plans, selectedGroupId, groups]);
 
   const handleSemesterChange = (sem) => {
     setSelectedSemester(sem);
@@ -114,9 +162,9 @@ function ProgressCheckPage() {
       return new Date(year, m - 1, d);
     };
 
-    const getRange = (gData) => {
-      if (!gData?.period) return null;
-      const parts = gData.period.split(/[~～－-]/);
+    const getRange = (planData) => {
+      if (!planData?.period) return null;
+      const parts = planData.period.split(/[~～－-]/);
       if (parts.length < 2) return null;
       const start = parseToDate(parts[0].trim());
       const end = parseToDate(parts[1].trim());
@@ -131,28 +179,13 @@ function ProgressCheckPage() {
     const sortedPlans = [...currentSemesterPlans].sort((a, b) => Number(a.week) - Number(b.week));
 
     const findMatch = (targetTime) => {
-      const getMatchedKey = (gData) => {
-        return Object.keys(gData || {}).find(k => 
-          String(k) === String(group.val) || 
-          String(k) === String(group.id) ||
-          String(k) === group.name.replace('⭐ ', '')
-        );
-      };
-
       const primaryIdx = sortedPlans.findIndex(plan => {
-        const k = getMatchedKey(plan.grades);
-        const r = getRange(plan.grades?.[k]);
+        const r = getRange(plan);
         return r && targetTime >= r.sTime && targetTime <= r.eTime;
       });
       if (primaryIdx !== -1) return { index: primaryIdx, isStrict: true };
 
-      const fallbackIdx = sortedPlans.findIndex(plan => {
-        return Object.values(plan.grades || {}).some(gData => {
-          const r = getRange(gData);
-          return r && targetTime >= r.sTime && targetTime <= r.eTime;
-        });
-      });
-      return { index: fallbackIdx, isStrict: false };
+      return { index: -1, isStrict: false };
     };
 
     let res = findMatch(todayTime);
@@ -165,11 +198,7 @@ function ProgressCheckPage() {
 
     if (res.index !== -1 && res.isStrict) {
       const p = sortedPlans[res.index];
-      const gradesData = p.grades || {};
-      const matchedKey = Object.keys(gradesData).find(k => 
-        String(k) === String(group.val) || String(k) === String(group.id) || String(k) === group.name.replace('⭐ ', '')
-      );
-      return { week: p.week, period: gradesData[matchedKey]?.period || '기간 미지정', index: res.index };
+      return { week: p.week, period: p.period || '기간 미지정', index: res.index };
     }
     return { week: '?', period: '기간 미지정', index: -1 };
   }, [currentDate, currentSemesterPlans, selectedGroupId, groups]);
@@ -254,32 +283,6 @@ function ProgressCheckPage() {
       const snap = await getDoc(doc(db, 'users', uid, 'progress_check', docId));
       const savedRecords = snap.exists() ? snap.data().records || {} : null;
 
-      // 시수 매칭 및 기초 차시 계산 로직 강화
-      const getGroupDataFromPlan = (plan) => {
-        const gradesData = plan.grades || {};
-        const k = Object.keys(gradesData).find(k => 
-          String(k) === String(group.val) || 
-          String(k) === String(group.id) || 
-          String(k) === group.name.replace('⭐ ', '') ||
-          String(k) === group.name.replace('학년', '')
-        );
-        return gradesData[k];
-      };
-
-      // [1] 학급/학년 데이터에서 주간 시수(weeklyH)를 안전하게 추출
-      const getWeeklyHFromPlan = (plan) => {
-        const gradesData = plan.grades || {};
-        const k = Object.keys(gradesData).find(key => 
-          String(key) === String(group.val) || 
-          String(key) === String(group.id) || 
-          String(key) === group.name.replace('⭐ ', '') ||
-          String(key) === group.name.replace('학년', '')
-        );
-        const gData = gradesData[k];
-        // 시수가 설정되어 있지 않으면 기본 1회로 간주하거나 0으로 처리
-        return Number(gData?.weeklyH || 0);
-      };
-
       const sortedPlans = [...currentSemesterPlans].sort((a, b) => Number(a.week) - Number(b.week));
       
       // [2] 기초 차시 계산용 헬퍼 함수 정의
@@ -297,26 +300,15 @@ function ProgressCheckPage() {
       };
 
       const getWeeklyHFromPlanForClass = (plan, classId) => {
-        const gradesData = plan.grades || {};
-        const k = Object.keys(gradesData).find(key => 
-          String(key) === String(group.val) || String(key) === String(group.id) || 
-          String(key) === group.name.replace('⭐ ', '') || String(key) === group.name.replace('학년', '')
-        );
-        const gData = gradesData[k];
-        if (!gData || Number(gData.weeklyH || 0) === 0) return 0;
+        if (!plan || Number(plan.weeklyH || 0) === 0) return 0;
         return getActualWeeklyH(classId);
       };
 
       const topics = [];
       sortedPlans.forEach(plan => {
-        const gradesData = plan.grades || {};
-        const k = Object.keys(gradesData).find(key => 
-          String(key) === String(group.val) || String(key) === String(group.id) || String(key) === group.name.replace('⭐ ', '') || String(key) === group.name.replace('학년', '')
-        );
-        const gData = gradesData[k];
-        if (gData && gData.topics) {
-          const weeklyH = Number(gData.weeklyH || 0);
-          for (let i = 0; i < weeklyH; i++) topics.push(gData.topics[i] || '');
+        if (plan && plan.topics) {
+          const weeklyH = Number(plan.weeklyH || 0);
+          for (let i = 0; i < weeklyH; i++) topics.push(plan.topics[i] || '');
         }
       });
       setAllSemesterTopics(topics);
@@ -564,10 +556,9 @@ function ProgressCheckPage() {
         };
 
         sortedPlans.forEach(plan => {
-          const gData = (plan.grades || {})[Object.keys(plan.grades || {}).find(k => k === String(group.val) || k === String(group.id) || k === group.name.replace('⭐ ', ''))];
-          if (!gData) return;
-          const weeklyTopics = gData.topics || [];
-          const range = gData.period?.split(/[~～－-]/);
+          if (!plan) return;
+          const weeklyTopics = plan.topics || [];
+          const range = plan.period?.split(/[~～－-]/);
           if (!range || range.length < 2) return;
           const startDt = parseToDate(range[0].trim());
           const endDt = parseToDate(range[1].trim());
@@ -589,7 +580,7 @@ function ProgressCheckPage() {
             timetable.forEach((row, pIdx) => {
               if (String(row[dayIdx]) === String(cls.id)) {
                 const actualWeeklyH = getActualWeeklyH(cls.id);
-                const planWeeklyH = Number(gData.weeklyH || 0);
+                const planWeeklyH = Number(plan.weeklyH || 0);
 
                 const rowKey = group.type === 'grade' ? `${cls.classNum}_p${pIdx}` : `club_p${pIdx}`;
                 const finalLessonNum = cumulativeLessonCount + (groupOffsets[cls.classNum] || 0);
