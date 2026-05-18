@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx';
  */
 export const exportGrowthDailyToExcel = (today, selectedGroup, selectedCategory, students, recordData) => {
   if (!selectedGroup || !selectedCategory) return;
-  const filtered = students.filter(s => selectedGroup.type === 'class' ? (s.grade === selectedGroup.grade && s.class_number === selectedGroup.class_number) : (s.club === selectedGroup.name)).sort((a, b) => a.student_number - b.student_number);
+  const filtered = students.filter(s => selectedGroup.type === 'class' ? (s.grade === selectedGroup.grade && s.class_number === selectedGroup.class_number) : (s.club === selectedGroup.name)).sort((a, b) => (Number(a.grade) || 0) - (Number(b.grade) || 0) || (Number(a.class_number) || 0) - (Number(b.class_number) || 0) || (Number(a.student_number) || 0) - (Number(b.student_number) || 0));
   const colCount = selectedCategory.columnCount || 1;
   const data = filtered.map(student => {
     const record = recordData[student.id] || { value: '', note: '', values: [] };
@@ -25,7 +25,7 @@ export const exportGrowthDailyToExcel = (today, selectedGroup, selectedCategory,
 export const exportGrowthMonthlyToExcel = (selectedMonth, selectedGroup, selectedCategory, students, monthlyRecords) => {
   if (!selectedGroup || !selectedCategory) return;
   const days = new Date(selectedMonth.split('-')[0], selectedMonth.split('-')[1], 0).getDate();
-  const filtered = students.filter(s => selectedGroup.type === 'class' ? (s.grade === selectedGroup.grade && s.class_number === selectedGroup.class_number) : (s.club === selectedGroup.name)).sort((a, b) => a.student_number - b.student_number);
+  const filtered = students.filter(s => selectedGroup.type === 'class' ? (s.grade === selectedGroup.grade && s.class_number === selectedGroup.class_number) : (s.club === selectedGroup.name)).sort((a, b) => (Number(a.grade) || 0) - (Number(b.grade) || 0) || (Number(a.class_number) || 0) - (Number(b.class_number) || 0) || (Number(a.student_number) || 0) - (Number(b.student_number) || 0));
   const data = filtered.map(student => {
     const row = { '번호/반': selectedGroup.type === 'class' ? student.student_number : `${student.grade}-${student.class_number}`, '성명': student.name };
     for (let d = 1; d <= days; d++) {

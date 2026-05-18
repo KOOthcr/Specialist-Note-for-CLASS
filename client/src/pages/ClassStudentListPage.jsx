@@ -31,7 +31,7 @@ function ClassStudentListPage() {
     if (!selectedGroup) return false;
     if (selectedGroup.type === 'class') return s.grade === selectedGroup.grade && s.class_number === selectedGroup.class_number;
     return s.club === selectedGroup.name;
-  }).sort((a, b) => a.student_number - b.student_number);
+  }).sort((a, b) => (Number(a.grade) || 0) - (Number(b.grade) || 0) || (Number(a.class_number) || 0) - (Number(b.class_number) || 0) || (Number(a.student_number) || 0) - (Number(b.student_number) || 0));
 
   const handleExcelExport = () => {
     if (filteredStudents.length === 0) { showAlert("출력할 학생 데이터가 없습니다.", "알림", "error"); return; }

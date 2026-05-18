@@ -10,6 +10,24 @@ import AttendanceDailyView from '../components/attendance/AttendanceDailyView';
 import AttendanceMonthlyView from '../components/attendance/AttendanceMonthlyView';
 import './StudentList.css';
 
+/**
+ * 학생들을 학년, 반, 번호 순으로 일관되게 정렬하는 헬퍼 함수입니다.
+ * 초등학교 교실 환경에서 동아리반(여러 학년/반 혼합) 목록을 직관적으로 정렬하기 위해 사용합니다.
+ */
+const sortStudentsByGradeClassNumber = (a, b) => {
+  const gradeA = Number(a.grade) || 0;
+  const gradeB = Number(b.grade) || 0;
+  if (gradeA !== gradeB) return gradeA - gradeB;
+
+  const classA = Number(a.class_number) || 0;
+  const classB = Number(b.class_number) || 0;
+  if (classA !== classB) return classA - classB;
+
+  const numA = Number(a.student_number) || 0;
+  const numB = Number(b.student_number) || 0;
+  return numA - numB;
+};
+
 function AttendancePage() {
   const { showAlert } = useModal();
   const [viewMode, setViewMode] = useState(null);
@@ -138,7 +156,7 @@ function AttendancePage() {
     if (!selectedGroup) return false;
     if (selectedGroup.type === 'class') return s.grade === selectedGroup.grade && s.class_number === selectedGroup.class_number;
     return s.club === selectedGroup.name;
-  }).sort((a, b) => { if (a.grade !== b.grade) return a.grade - b.grade; if (a.class_number !== b.class_number) return a.class_number - b.class_number; return a.student_number - b.student_number; });
+  }).sort(sortStudentsByGradeClassNumber);
 
   const getDaysInMonth = (yearMonth) => { const [year, month] = yearMonth.split('-').map(Number); return new Date(year, month, 0).getDate(); };
   const getDayOfWeek = (yearMonth, day) => { const [year, month] = yearMonth.split('-').map(Number); const date = new Date(year, month - 1, day); const days = ['일', '월', '화', '수', '목', '금', '토']; return days[date.getDay()]; };
@@ -151,38 +169,11 @@ function AttendancePage() {
   );
 
   const renderDailyView = () => (
-    <AttendanceDailyView 
-      today={today} setToday={setToday}
-      selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup}
-      renderGroupSelection={renderGroupSelection}
-      fetchAttendanceRecord={fetchAttendanceRecord}
-      handleSave={handleSave}
-      setViewMode={setViewMode}
-      filteredStudents={filteredStudents}
-      attendanceData={attendanceData}
-      setAttendanceData={setAttendanceData}
-    />
+    <AttendanceDailyView today={today} setToday={setToday} selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup} renderGroupSelection={renderGroupSelection} fetchAttendanceRecord={fetchAttendanceRecord} handleSave={handleSave} setViewMode={setViewMode} filteredStudents={filteredStudents} attendanceData={attendanceData} setAttendanceData={setAttendanceData} />
   );
 
   const renderMonthlyView = () => (
-    <AttendanceMonthlyView 
-      selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth}
-      selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup}
-      renderGroupSelection={renderGroupSelection}
-      fetchMonthlyRecords={fetchMonthlyRecords}
-      currentEditStatus={currentEditStatus} setCurrentEditStatus={setCurrentEditStatus}
-      isSaving={isSaving}
-      handleMonthlySave={handleMonthlySave}
-      handleExcelExport={handleExcelExport}
-      setViewMode={setViewMode}
-      filteredStudents={filteredStudents}
-      monthlyRecords={monthlyRecords}
-      handleCellClick={handleCellClick}
-      setActiveStudentForReason={setActiveStudentForReason}
-      setIsReasonModalOpen={setIsReasonModalOpen}
-      getDayOfWeek={getDayOfWeek}
-      getDaysInMonth={getDaysInMonth}
-    />
+    <AttendanceMonthlyView selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup} renderGroupSelection={renderGroupSelection} fetchMonthlyRecords={fetchMonthlyRecords} currentEditStatus={currentEditStatus} setCurrentEditStatus={setCurrentEditStatus} isSaving={isSaving} handleMonthlySave={handleMonthlySave} handleExcelExport={handleExcelExport} setViewMode={setViewMode} filteredStudents={filteredStudents} monthlyRecords={monthlyRecords} handleCellClick={handleCellClick} setActiveStudentForReason={setActiveStudentForReason} setIsReasonModalOpen={setIsReasonModalOpen} getDayOfWeek={getDayOfWeek} getDaysInMonth={getDaysInMonth} />
   );
 
   return (
