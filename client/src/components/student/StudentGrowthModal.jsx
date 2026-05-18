@@ -63,11 +63,13 @@ function StudentGrowthModal({ categories, growthType, setGrowthType, growthRecor
         {growthRecords.map((record, index) => (
           <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
             <span style={{ lineHeight: '46px', fontWeight: 'bold', color: '#475569' }}>{record.round}차</span>
+            {/* 아이폰(iOS) 등 모바일 브라우저에서 모달이 켜지자마자 autoFocus가 작동하면, 
+                가상 키보드 충돌 및 화면 포커스 프리징 버그가 발생할 수 있어 명시적으로 제거합니다. */}
             <input type="number" value={record.value} onChange={(e) => {
               const newRecords = [...growthRecords];
               newRecords[index].value = e.target.value;
               setGrowthRecords(newRecords);
-            }} className="modal-input" placeholder="숫자 입력" style={{ flex: 1 }} autoFocus={index === growthRecords.length - 1} />
+            }} className="modal-input" placeholder="숫자 입력" style={{ flex: 1 }} />
           </div>
         ))}
       </div>

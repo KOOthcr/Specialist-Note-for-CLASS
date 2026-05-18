@@ -106,11 +106,14 @@
   bottom: 0;
   background-color: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px); /* Safari 및 iOS 지원 */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   padding: 20px;
+  overflow-y: auto; /* 모바일에서 내용이 넘치면 overlay 자체 스크롤 */
+  -webkit-overflow-scrolling: touch; /* iOS 터치 스크롤 최적화 */
 }
 
 .student-modal-content {
@@ -121,10 +124,11 @@
   padding: 40px;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-sizing: border-box;
 }
 
 @keyframes modalPop {
-  0% { transform: scale(0.9); opacity: 0; }
+  0% { transform: scale(0.95); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 
@@ -330,5 +334,17 @@
   .student-header {
     flex-direction: column;
     text-align: center;
+  }
+
+  .student-modal-overlay {
+    align-items: flex-start; /* 모바일에서 모달이 화면을 벗어나면 위에서부터 시작하도록 설정 */
+  }
+  
+  .student-modal-content {
+    padding: 24px 20px;
+    margin: 20px auto; /* 모바일 스크롤 시 위아래 여백 확보 */
+    max-height: calc(100vh - 40px); /* 모바일 화면 높이에서 여백 차감 */
+    overflow-y: auto; /* 넘치는 콘텐츠는 내부 스크롤로 매끄럽게 처리 */
+    -webkit-overflow-scrolling: touch;
   }
 }

@@ -7,7 +7,8 @@ function StudentDiaryModal({ diaryText, setDiaryText, onSubmit, onClose }) {
       <div className="modal-icon-large">📓</div>
       <h3 className="modal-title">오늘의 체육 일기</h3>
       <p className="modal-desc">오늘 수업에서 무엇을 배웠나요? 재미있었던 점이나 느낀 점을 자유롭게 적어보세요.</p>
-      <textarea className="modal-textarea" placeholder="여기에 일기를 작성해 주세요..." value={diaryText} onChange={(e) => setDiaryText(e.target.value)} autoFocus />
+      {/* 모바일 가상 키보드 충돌 및 프리징을 피하기 위해 autoFocus를 제거합니다. */}
+      <textarea className="modal-textarea" placeholder="여기에 일기를 작성해 주세요..." value={diaryText} onChange={(e) => setDiaryText(e.target.value)} />
       <div className="modal-actions">
         <button className="btn-cancel" onClick={onClose}>취소</button>
         <button className="btn-submit" onClick={onSubmit} disabled={!diaryText.trim()}>일기 제출하기</button>

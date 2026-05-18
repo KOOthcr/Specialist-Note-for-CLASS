@@ -7,7 +7,8 @@ function StudentQnaModal({ qnaText, setQnaText, onSubmit, onClose }) {
       <div className="modal-icon-large">💬</div>
       <h3 className="modal-title">선생님께 한마디</h3>
       <p className="modal-desc">수업 중 궁금했던 점이나 건의사항을 선생님만 볼 수 있게 남겨주세요.</p>
-      <textarea className="modal-textarea" placeholder="여기에 질문이나 하고 싶은 말을 적어주세요..." value={qnaText} onChange={(e) => setQnaText(e.target.value)} autoFocus />
+      {/* 모바일 가상 키보드 충돌 및 프리징을 피하기 위해 autoFocus를 제거합니다. */}
+      <textarea className="modal-textarea" placeholder="여기에 질문이나 하고 싶은 말을 적어주세요..." value={qnaText} onChange={(e) => setQnaText(e.target.value)} />
       <div className="modal-actions">
         <button className="btn-cancel" onClick={onClose}>취소</button>
         <button className="btn-submit" onClick={onSubmit} disabled={!qnaText.trim()}>메시지 보내기</button>
